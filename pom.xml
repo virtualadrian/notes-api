@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+
+  <!-- APPLICATION SPECIFIC -->
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <java.version>1.8</java.version>
+    <spring.boot.version>1.5.6.RELEASE</spring.boot.version>
+    <docker.build.directory>${project.basedir}</docker.build.directory>
+    <docker.skip>false</docker.skip>
+    <plugin.fabric8io-docker.version>0.20.1</plugin.fabric8io-docker.version>
+    <plugin.maven-compiler.version>3.6.1</plugin.maven-compiler.version>
+    <plugin.maven-enforcer.version>1.4.1</plugin.maven-enforcer.version>
+    <plugin.maven-resources.version>3.0.2</plugin.maven-resources.version>
+    <plugin.maven-surefire.version>2.20</plugin.maven-surefire.version>
+    <spring.aop.version>1.8.0</spring.aop.version>
+    <docker.skip>true</docker.skip>
+  </properties>
+
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>1.5.6.RELEASE</version>
+  </parent>
+
+  <!-- MODULE INFORMATION -->
+  <groupId>com.notes</groupId>
+  <artifactId>com-notes-api</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <!-- APPLICATION DEPENDENCIES -->
+  <dependencies>
+
+    <!-- Web Starter -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+
+    <!-- Mail Starter -->
+    <dependency>
+      <groupId>it.ozimov</groupId>
+      <artifactId>spring-boot-mustache-email</artifactId>
+      <version>0.6.3</version>
+    </dependency>
+
+    <!-- swagger springfox maven -->
+    <dependency>
+      <groupId>io.springfox</groupId>
+      <artifactId>springfox-swagger2</artifactId>
+      <version>2.6.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.springfox</groupId>
+      <artifactId>springfox-swagger-ui</artifactId>
+      <version>2.6.1</version>
+    </dependency>
+
+    <!-- Spring  Boot JPA support -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+
+    <!-- High Performance Connection Pooling -->
+    <dependency>
+      <groupId>com.zaxxer</groupId>
+      <artifactId>HikariCP</artifactId>
+    </dependency>
+
+    <!-- Spring Data JPA -->
+    <dependency>
+      <groupId>org.springframework.data</groupId>
+      <artifactId>spring-data-jpa</artifactId>
+    </dependency>
+
+    <!-- MYSQL native dependency -->
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>5.1.36</version>
+    </dependency>
+
+    <!-- H2 native dependency -->
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <!-- ModelMapper translate Entity Models to View Models etc -->
+    <dependency>
+      <groupId>org.modelmapper</groupId>
+      <artifactId>modelmapper</artifactId>
+      <version>0.7.5</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.github.jmnarloch</groupId>
+      <artifactId>modelmapper-spring-boot-starter</artifactId>
+      <version>1.1.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.5</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>24.1-jre</version>
+    </dependency>
+
+    <!-- Security -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.security.oauth</groupId>
+      <artifactId>spring-security-oauth2</artifactId>
+      <version>2.1.0.RELEASE</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-jwt</artifactId>
+      <version>1.0.9.RELEASE</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.auth0</groupId>
+      <artifactId>java-jwt</artifactId>
+      <version>3.4.0</version>
+    </dependency>
+
+    <!-- Lombok Awesomeness -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.16.18</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Development Tools -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-devtools</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+
+    <defaultGoal>clean install</defaultGoal>
+    <finalName>app</finalName>
+
+    <pluginManagement>
+      <plugins>
+
+        <plugin>
+          <groupId>io.fabric8</groupId>
+          <artifactId>docker-maven-plugin</artifactId>
+          <version>${plugin.fabric8io-docker.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${plugin.maven-compiler.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <version>${plugin.maven-enforcer.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>${plugin.maven-resources.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${plugin.maven-surefire.version}</version>
+        </plugin>
+      </plugins>
+
+
+    </pluginManagement>
+
+
+    <plugins>
+
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <inherited>true</inherited>
+        <executions>
+          <execution>
+            <id>enforce-minimum-maven-3.3</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <version>[3.3,)</version>
+                  <message>
+                    ##################################################################
+                    ### PLEASE UPGRADE YOUR MAVEN INSTALLATION TO 3.3 AT A MINIMUM ###
+                    ##################################################################
+                  </message>
+                </requireMavenVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>docker-resources</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <delimiters>
+                <delimiter>${*}</delimiter>
+              </delimiters>
+              <resources>
+                <resource>
+                  <directory>docker</directory>
+                  <filtering>true</filtering>
+                  <excludes>
+                    <exclude>**/.dockerignore</exclude>
+                    <exclude>**/.gitignore</exclude>
+                  </excludes>
+                </resource>
+              </resources>
+              <outputDirectory>${docker.build.directory}</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>io.fabric8</groupId>
+        <artifactId>docker-maven-plugin</artifactId>
+        <version>0.22.1</version>
+        <configuration>
+          <verbose>true</verbose>
+
+          <!--<pullRegistry>docker-sit.gfs.com</pullRegistry>-->
+          <!--<pushRegistry>docker-builds-sit.gfs.com</pushRegistry>-->
+
+          <images>
+
+            <image>
+              <name>mysqldbms</name>
+              <alias>mysqldbms</alias>
+
+              <build>
+                <from>mysql/mysql-server:latest</from>
+
+                <ports>
+                  <port>3306</port>
+                </ports>
+              </build>
+
+              <run>
+                <env>
+                  <MYSQL_ROOT_PASSWORD>_candyCan3z_</MYSQL_ROOT_PASSWORD>
+                  <MYSQL_DATABASE>appdb</MYSQL_DATABASE>
+                  <MYSQL_USER>appdbuser</MYSQL_USER>
+                  <MYSQL_PASSWORD>P@ssword1</MYSQL_PASSWORD>
+                  <MYSQL_ALLOW_EMPTY_PASSWORD>no</MYSQL_ALLOW_EMPTY_PASSWORD>
+                </env>
+                <wait>
+                  <time>15000</time>
+                </wait>
+                <ports>
+                  <port>3306:3306</port>
+                </ports>
+
+              </run>
+
+            </image>
+
+            <image>
+              <name>maven/${project.artifactId}:${project.version}</name>
+              <alias>${project.artifactId}:${project.version}</alias>
+              <build>
+                <from>fabric8/java-centos-openjdk8-jdk</from>
+
+                <assembly>
+                  <descriptorRef>artifact</descriptorRef>
+                </assembly>
+                <tags>
+                  <tag>${project.version}</tag>
+                </tags>
+
+                <labels>
+                  <maven.project.groupId>${project.groupId}</maven.project.groupId>
+                  <maven.project.artifactId>${project.artifactId}</maven.project.artifactId>
+                  <maven.project.version>${project.version}</maven.project.version>
+                </labels>
+
+                <ports>
+                  <port>8080</port>
+                </ports>
+
+              </build>
+              <run>
+                <links>
+                  <link>mysqldbms</link>
+                </links>
+
+                <dependsOn>
+                  <container>mysqldbms</container>
+                </dependsOn>
+
+                <ports>
+                  <port>8080:8080</port>
+                </ports>
+
+                <cmd>java -jar /maven/app.jar</cmd>
+              </run>
+            </image>
+
+
+          </images>
+
+
+        </configuration>
+
+
+        <executions>
+          <execution>
+            <id>docker-clean</id>
+            <phase>clean</phase>
+            <goals>
+              <goal>remove</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>docker-build</id>
+            <goals>
+              <goal>build</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>docker-source</id>
+            <goals>
+              <goal>source</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>docker-push</id>
+            <goals>
+              <goal>push</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+
+    </plugins>
+  </build>
+
+
+</project>

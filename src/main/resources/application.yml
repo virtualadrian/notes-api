@@ -1,0 +1,146 @@
+server:
+  address: 127.0.0.1
+  port: 8080
+  contextPath: /api/v1
+---
+spring:
+  profiles: default
+  devtools:
+    livereload:
+      enabled: true
+  jpa:
+    database: H2
+    properties:
+      hibernate:
+        hbm2ddl:
+          import_files: sql-scripts/data.sql,sql-scripts/oauth-client-schema-and-data.sql
+          method: create
+          auto: create
+        show_sql: true
+        format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create
+  mail:
+    host: localhost
+    port: 1025
+    protocol: smtp
+    default-encoding: UTF-8
+#    username: llty_mail_usr
+#    password: l1TyM@ilP4$$
+#    properties:
+#      smtp:
+#        auth: true
+#        starttls:
+#          enabled: true
+  datasource:
+    url: "jdbc:h2:mem:default"
+    username: sa
+    password:
+    driverClassName: org.h2.Driver
+    hikari:
+      maximumPoolSize: 100
+      idle-timeout: 10000
+    initialize: true
+  webapp:
+    cors:
+      origins: "*"
+---
+spring:
+  profiles: devmysql
+  devtools:
+    livereload:
+      enabled: true
+  jpa:
+    database: MYSQL
+    properties:
+      hibernate:
+        hbm2ddl:
+          import_files: sql-scripts/data.sql,sql-scripts/oauth-client-schema-and-data.sql
+          method: create
+          auto: create
+        show_sql: true
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+        default_schema: servermonv1
+  mail:
+    host: localhost
+    port: 1025
+    protocol: smtp
+    default-encoding: UTF-8
+#    username: llty_mail_usr
+#    password: l1TyM@ilP4$$
+#    properties:
+#      smtp:
+#        auth: true
+#        starttls:
+#          enabled: true
+  datasource:
+    url: "jdbc:mysql://localhost:3306/notelerdb"
+    username: notelerdbusr
+    password: notelerdbusr
+    driverClassName: com.mysql.jdbc.Driver
+    hikari:
+      maximumPoolSize: 100
+      idle-timeout: 10000
+    initialize: true
+  webapp:
+    cors:
+      origins: "*"
+---
+spring:
+  aop:
+    proxy-target-class: true
+  profiles: production
+  devtools:
+    livereload:
+      enabled: true
+  jpa:
+    database: H2
+    properties:
+      hibernate:
+        hbm2ddl:
+          import_files: sql-scripts/data.sql,sql-scripts/oauth-client-schema-and-data.sql
+          method: create
+          auto: create
+        show_sql: true
+        format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create
+  mail:
+    host: localhost
+    port: 1025
+    protocol: smtp
+    default-encoding: UTF-8
+#    username: llty_mail_usr
+#    password: l1TyM@ilP4$$
+#    properties:
+#      smtp:
+#        auth: true
+#        starttls:
+#          enabled: true
+  datasource:
+    url: "jdbc:h2:mem:default"
+    username: sa
+    password:
+    driverClassName: org.h2.Driver
+    hikari:
+      maximumPoolSize: 100
+      idle-timeout: 10000
+    initialize: true
+---
+security:
+  oauth2:
+    resource:
+      filter-order: 3
+  signing-key-password: MaYzkSjmkzPC57LAAAMaYzkSjmkzPC57L
+  security-realm: Loyalty_API_WEB
+  jwt:
+    resource-ids: loyalty_api_web_resourceid
+site:
+  settings:
+    web-url: http://localhost:8080
+
