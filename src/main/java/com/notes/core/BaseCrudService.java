@@ -67,7 +67,7 @@ public class BaseCrudService<M, E extends BaseEntity, ID extends Serializable> i
     @Override
     public M find(ID id) {
         E entity = this.repository.findOne(id);
-        return this.mapper.map(entity, modelClass);
+        return toModel(entity);
     }
 
     /**

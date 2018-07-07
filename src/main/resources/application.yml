@@ -8,6 +8,9 @@ spring:
   devtools:
     livereload:
       enabled: true
+  jackson:
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
   jpa:
     database: H2
     properties:
@@ -52,18 +55,24 @@ spring:
   devtools:
     livereload:
       enabled: true
+  jackson:
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
   jpa:
     database: MYSQL
     properties:
       hibernate:
         hbm2ddl:
           import_files: sql-scripts/data.sql,sql-scripts/oauth-client-schema-and-data.sql
-          method: create
-          auto: create
+          method: update
+          auto: update
         show_sql: true
         format_sql: true
         dialect: org.hibernate.dialect.MySQLDialect
         default_schema: notelerdb
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
   mail:
     host: localhost
     port: 1025

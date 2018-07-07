@@ -15,7 +15,7 @@ public class NoteController extends BaseController {
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<Iterable<NoteModel>> getAll() {
-        return Ok(noteService.findall(0, 1));
+        return Ok(noteService.findall(0, 100));
     }
 
     @RequestMapping(value = "/{page}/{pageSize}", method = RequestMethod.GET)
