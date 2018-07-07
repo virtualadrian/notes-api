@@ -8,6 +8,15 @@ public class AccountAwareOAuth2Request extends OAuth2Request {
     }
 
     private Long accountId;
+    private String firstName;
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
     public Long getAccountId() {
         return accountId;
