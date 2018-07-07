@@ -26,6 +26,7 @@ public class AccountTokenEnhancer extends JwtAccessTokenConverter {
         Optional.ofNullable(accountService.loadByUsername(authentication.getName()))
             .ifPresent(account -> {
                 info.put("accountId", account.getId());
+                info.put("firstName", account.getFirstName());
             });
 
         enhancedAccessToken.setAdditionalInformation(info);
