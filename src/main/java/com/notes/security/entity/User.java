@@ -82,7 +82,7 @@ public class User implements UserDetails {
      * they are a fairly small collection of items.
      */
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_role", joinColumns
+    @JoinTable(name = "app_user_role", joinColumns
         = @JoinColumn(name = "user_id",
         referencedColumnName = "id"),
         inverseJoinColumns = @JoinColumn(name = "role_id",

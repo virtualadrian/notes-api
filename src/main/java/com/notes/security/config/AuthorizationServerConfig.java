@@ -40,7 +40,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Override
     public void configure(ClientDetailsServiceConfigurer configurer) throws Exception {
-        configurer.jdbc(dataSource);
+        configurer.jdbc(dataSource).jdbc();
     }
 
     @Bean

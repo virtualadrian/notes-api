@@ -39,7 +39,10 @@ public class AccountTokenEnhancer extends JwtAccessTokenConverter {
         OAuth2Authentication authentication = super.extractAuthentication(map);
         AccountAwareOAuth2Request accountAwareOAuth2Request =
             new AccountAwareOAuth2Request(authentication.getOAuth2Request());
+
         accountAwareOAuth2Request.setAccountId(Long.valueOf(map.get("accountId").toString()));
+        accountAwareOAuth2Request.setFirstName(map.get("firstName").toString());
+
         return new OAuth2Authentication(accountAwareOAuth2Request,  authentication.getUserAuthentication());
     }
 }
