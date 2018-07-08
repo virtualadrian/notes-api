@@ -14,10 +14,10 @@ public class NoteEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
-    private long id;
+    private Long id;
 
     @Column(name="account_id")
-    private long accountId;
+    private Long accountId;
 
     @Column(name="note_title", length = 512)
     private String noteTitle;

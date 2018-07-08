@@ -106,8 +106,12 @@ public class BaseCrudService<M, E extends BaseEntity, ID extends Serializable> i
     public Page<M> findall(M example, int page, int pageSize) {
         // create example repository, search and page
         E sampleEntity = this.mapper.map(example, this.entityClass);
-        Iterable<E> entities = this.repository.findAll(Example.of(sampleEntity),new PageRequest(page, pageSize));
-        return this.mapper.map(entities, this.modelCollectionTypeToken);
+
+        Example<E> searchEntity = Example.of(sampleEntity);
+
+        Iterable<E> entities = this.repository.findAll(searchEntity, new PageRequest(page, pageSize));
+
+        return toPageModels(entities);
     }
 
     /**
@@ -177,12 +181,18 @@ public class BaseCrudService<M, E extends BaseEntity, ID extends Serializable> i
         return this.mapper.map(model, this.entityClass);
     }
 
-    public Iterable<M> toModels(Iterable<E> entities) {
+
+    private Page<M> toPageModels(Iterable<E> entities) {
         if (entities == null) return null;
         return this.mapper.map(entities, this.modelCollectionTypeToken);
     }
 
-    public Iterable<E> toEntities(Iterable<M> models) {
+    private Iterable<M> toModels(Iterable<E> entities) {
+        if (entities == null) return null;
+        return this.mapper.map(entities, this.modelCollectionTypeToken);
+    }
+
+    private Iterable<E> toEntities(Iterable<M> models) {
         if (models == null) return null;
         return this.mapper.map(models, this.entityCollectionTypeToken);
     }
