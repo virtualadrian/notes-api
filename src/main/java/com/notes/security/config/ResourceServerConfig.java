@@ -22,6 +22,8 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     @Value("${security.jwt.resource-ids}")
     private String resourceIds;
 
+
+
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
         resources.resourceId(resourceIds).tokenServices(tokenServices);
@@ -35,6 +37,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
             .authorizeRequests()
             .antMatchers("/home/**","/actuator/**", "/api-docs/**").permitAll()
             .antMatchers("/account/register/**","/app/account/register").permitAll()
+            .antMatchers("/note/images/**", "/assets/note/images/**").permitAll()
             .anyRequest().authenticated();
     }
 }
