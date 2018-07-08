@@ -7,8 +7,8 @@ import java.time.LocalDateTime;
 
 @Data
 public class NoteModel {
-    private long id;
-    private long accountId;
+    private Long id;
+    private Long accountId;
     private String noteTitle;
     private String noteBody;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

@@ -49,6 +49,15 @@ spring:
   webapp:
     cors:
       origins: "*"
+  assets:
+    static:
+      path: ./assets/uploads
+  resources:
+      static-locations: ./assets/uploads
+  http:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
 ---
 spring:
   profiles: devmysql
@@ -97,6 +106,15 @@ spring:
   webapp:
     cors:
       origins: "*"
+  assets:
+    static:
+      path: ./assets/uploads
+  resources:
+    static-locations: ./assets/uploads
+  http:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
 ---
 spring:
   aop:
