@@ -171,7 +171,7 @@ public class BaseCrudService<M, E extends BaseEntity, ID extends Serializable> i
         this.repository.delete(id);
     }
 
-    public M toModel(E entity) {
+    protected M toModel(E entity) {
         if (entity == null) return null;
         return this.mapper.map(entity, this.modelClass);
     }
@@ -182,17 +182,17 @@ public class BaseCrudService<M, E extends BaseEntity, ID extends Serializable> i
     }
 
 
-    private Page<M> toPageModels(Iterable<E> entities) {
+    protected Page<M> toPageModels(Iterable<E> entities) {
         if (entities == null) return null;
         return this.mapper.map(entities, this.modelCollectionTypeToken);
     }
 
-    private Iterable<M> toModels(Iterable<E> entities) {
+    protected Iterable<M> toModels(Iterable<E> entities) {
         if (entities == null) return null;
         return this.mapper.map(entities, this.modelCollectionTypeToken);
     }
 
-    private Iterable<E> toEntities(Iterable<M> models) {
+    protected Iterable<E> toEntities(Iterable<M> models) {
         if (models == null) return null;
         return this.mapper.map(models, this.entityCollectionTypeToken);
     }

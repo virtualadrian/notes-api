@@ -29,7 +29,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     @Value("${security.jwt.resource-ids}")
     private String resourceIds;
 
-    @Value("${security.enabled}")
+    @Value("${spring.security.enabled}")
     private Boolean securityEnabled;
 
     @Override
