@@ -5,6 +5,8 @@ server:
 ---
 spring:
   profiles: default
+  security:
+    enabled: true
   aws:
     s3:
       bucket: userasset.dev.noteler.com
@@ -67,6 +69,8 @@ spring:
 ---
 spring:
   profiles: devmysql
+  security:
+    enabled: true
   aws:
     s3:
       bucket: userasset.dev.noteler.com
