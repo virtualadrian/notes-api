@@ -7,6 +7,7 @@ import com.notes.security.entity.User;
 import com.notes.security.helper.AccountAwareOAuth2Request;
 import com.notes.security.repository.RoleRepository;
 import com.notes.security.repository.UserRepository;
+import com.notes.security.util.SecurityUtil;
 import com.notes.services.mail.MailService;
 import com.notes.services.verification.VerificationModel;
 import com.notes.services.verification.VerificationService;
@@ -50,22 +51,8 @@ public class AccountService extends BaseCrudService<AccountModel, AccountEntity,
         super(AccountModel.class, AccountEntity.class);
     }
 
-    public AccountAwareOAuth2Request getCurrentAccountAuth() {
-        OAuth2Authentication authentication =
-            (OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication();
-        return  ((AccountAwareOAuth2Request) authentication.getOAuth2Request());
-    }
-
-    public String getCurrentUserName() {
-        return SecurityContextHolder.getContext().getAuthentication().getName();
-    }
-
-    public Long getCurrentUserAccountId() {
-        return getCurrentAccountAuth().getAccountId();
-    }
-
     public AccountModel loadCurrentUser() {
-        return this.loadByUsername(getCurrentUserName());
+        return this.loadByUsername(SecurityUtil.getCurrentUserName());
     }
 
     public AccountModel loadByUsername(String userName) {

@@ -5,6 +5,12 @@ server:
 ---
 spring:
   profiles: default
+  aws:
+    s3:
+      bucket: userasset.dev.noteler.com
+      key: AKIAIK2BQXMNK2YZHHZA
+      secret: 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
+      expireInMin: 3
   devtools:
     livereload:
       enabled: true
@@ -61,6 +67,12 @@ spring:
 ---
 spring:
   profiles: devmysql
+  aws:
+    s3:
+      bucket: userasset.dev.noteler.com
+      key: AKIAIK2BQXMNK2YZHHZA
+      secret: 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
+      expireInMin: 3
   devtools:
     livereload:
       enabled: true
@@ -170,4 +182,3 @@ security:
 site:
   settings:
     web-url: http://localhost:8080
-
