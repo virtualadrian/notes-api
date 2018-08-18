@@ -1,4 +1,4 @@
 package com.notes.core;
 
-public class BaseEntity {
+public class BaseEntity extends Object{
 }

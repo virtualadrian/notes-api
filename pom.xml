@@ -156,6 +156,13 @@
       <version>3.4.0</version>
     </dependency>
 
+    <!-- AWS SDK -->
+    <dependency>
+      <groupId>com.amazonaws</groupId>
+      <artifactId>aws-java-sdk</artifactId>
+      <version>1.11.389</version>
+    </dependency>
+
     <!-- Lombok Awesomeness -->
     <dependency>
       <groupId>org.projectlombok</groupId>

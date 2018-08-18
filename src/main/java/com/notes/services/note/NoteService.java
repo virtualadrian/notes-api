@@ -1,6 +1,7 @@
 package com.notes.services.note;
 
 import com.notes.core.BaseCrudService;
+import com.notes.security.util.SecurityUtil;
 import com.notes.services.account.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,7 +35,7 @@ public class NoteService extends BaseCrudService<NoteModel, NoteEntity, Long> {
 
     NoteModel createForCurrentUser(NoteModel newNote) {
 
-        newNote.setAccountId(accountService.getCurrentUserAccountId());
+        newNote.setAccountId(SecurityUtil.getCurrentUserAccountId());
         newNote.setNoteCreatedTime(LocalDateTime.now());
 
         return create(newNote);
@@ -42,7 +43,7 @@ public class NoteService extends BaseCrudService<NoteModel, NoteEntity, Long> {
 
     Iterable<NoteModel> findAllForCurrentUser(int page, int pageSize) {
         NoteModel search = new NoteModel();
-        search.setAccountId(accountService.getCurrentUserAccountId());
+        search.setAccountId(SecurityUtil.getCurrentUserAccountId());
 
         return this.findall(search, page, pageSize);
     }
