@@ -4,29 +4,31 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.hash.Hashing;
 import com.notes.core.BaseCrudService;
 import com.notes.security.entity.User;
-import com.notes.security.helper.AccountAwareOAuth2Request;
 import com.notes.security.repository.RoleRepository;
 import com.notes.security.repository.UserRepository;
+import com.notes.security.util.SecurityUtil;
 import com.notes.services.mail.MailService;
 import com.notes.services.verification.VerificationModel;
 import com.notes.services.verification.VerificationService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.stereotype.Service;
-
+import io.jsonwebtoken.Claims;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 @Service
-public class AccountService extends BaseCrudService<AccountModel, AccountEntity, Long>  {
+public class AccountService extends BaseCrudService<AccountModel, AccountEntity, Long> {
 
-    @Value("${site.settings.web-url}")
-    private String siteUrl;
+    @Value("${spring.webapp.web-url}")
+    private String webUrl;
 
     @Autowired
     private AccountRepository accountRepository;
@@ -50,67 +52,90 @@ public class AccountService extends BaseCrudService<AccountModel, AccountEntity,
         super(AccountModel.class, AccountEntity.class);
     }
 
-    public AccountAwareOAuth2Request getCurrentAccountAuth() {
-        OAuth2Authentication authentication =
-            (OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication();
-        return  ((AccountAwareOAuth2Request) authentication.getOAuth2Request());
-    }
-
-    public String getCurrentUserName() {
-        return SecurityContextHolder.getContext().getAuthentication().getName();
-    }
-
-    public Long getCurrentUserAccountId() {
-        return getCurrentAccountAuth().getAccountId();
-    }
-
-    public AccountModel loadCurrentUser() {
-        return this.loadByUsername(getCurrentUserName());
-    }
-
     public AccountModel loadByUsername(String userName) {
         return this.toModel(accountRepository.findByUsername(userName));
+    }
+
+    Boolean sendPasswordReset(AccountModel account) throws AccountException {
+        if (!emailExists(account.getEmail())) {
+            throw new AccountException("Email address does not exist: " + account.getEmail());
+        }
+
+        User user = userRepository.findByEmail(account.getEmail());
+        sendPasswordResetMessage(user, false);
+        return true;
     }
 
     AccountModel createNewDisabledAccount(AccountModel newAccount) throws AccountException {
         if (emailExists(newAccount.getEmail())) {
             throw new AccountException("Email address: " + newAccount.getEmail());
         }
-        sendRegisterWelcomeMessage(newAccount, createVerificationTokenForUser(createUserForAccount(newAccount)));
-        return create(newAccount);
+        AccountModel created = create(newAccount);
+        User user = createUserForAccount(newAccount);
+        sendPasswordResetMessage(user, true);
+        return created;
     }
 
-    Boolean checkTokenAndEnableUser(String token) {
-        VerificationModel verificationToken = verificationService.getValidOrNull(token);
-        if(verificationToken == null) return false;
-        User user = userRepository.findOne(verificationToken.getUserId());
+    private Claims validatePasswordChangeRequest(AccountConfirmationModel confirmation) {
+        if (!SecurityUtil
+            .validatePassword(confirmation.getPassword(), confirmation.getConfirmPassword())) {
+            return null;
+        }
+        return verificationService.getResetTokenClaims(confirmation.getToken());
+    }
+
+    private User updateTokenUserPassword(Claims claims, AccountConfirmationModel confirmation) {
+        User user = userRepository.findByEmail(claims.getSubject());
+        setUserPassword(user, confirmation.getPassword());
+        user.setEnabled(true);
+        userRepository.save(user);
+        return user;
+    }
+
+    Boolean resetUserPassword(AccountConfirmationModel confirmation) {
+        Claims claims = validatePasswordChangeRequest(confirmation);
+        if (claims == null) {
+            return false;
+        }
+        updateTokenUserPassword(claims, confirmation);
+        return true;
+    }
+
+    Boolean updateCurrentUserPassword(AccountPasswordModel passwordModel) {
+        if (!SecurityUtil
+            .validatePassword(passwordModel.getPassword(), passwordModel.getConfirmPassword())) {
+            return false;
+        }
+        User user = userRepository.findByUsername(SecurityUtil.getCurrentUserName());
+        setUserPassword(user, passwordModel.getPassword());
         user.setEnabled(true);
         userRepository.save(user);
         return true;
     }
 
-    void sendRegisterWelcomeMessage(AccountModel newAccount, String newAccountToken){
-        Map<String, Object> modelObject = ImmutableMap.of(
-            "firstName", newAccount.getFirstName(),
-            "accountConfirmUrl", String.format("%s/account/register/confirm/%s", siteUrl, newAccountToken),
-            "userName", newAccount.getFirstName(),
-            "userEmail", newAccount.getEmail(),
-            "ourURL", siteUrl
-        );
+    private void sendPasswordResetMessage(User user, Boolean isRegistering) {
 
-        mailService.sendTemplatedMessage(newAccount.getEmail(), "system@llty.com",
-            String.format("Welcome! %s", newAccount.getFirstName()), "newAccountEmail.html", modelObject);
-    }
+        Map<String, Object> mailbag = new HashMap<>();
+        mailbag.put("firstName", user.getFirstName());
+        mailbag.put("userName", user.getUsername());
+        mailbag.put("email", user.getEmail());
+        mailbag.put("webUrl", webUrl);
+        mailbag.put("applicationName", "Noteler");
+        mailbag.put("supportEmail", "info@noteler.com");
+        mailbag.put("token", verificationService.getResetJwt(user));
 
-    private String createVerificationTokenForUser(User user) {
-        String token = Hashing.sha256().hashString(LocalDateTime.now().toString(), StandardCharsets.UTF_8).toString();
-        verificationService.create(new VerificationModel(user.getId(), token, LocalDateTime.now().plusDays(3)));
-        return token;
+        String template = isRegistering ? "newAccountEmail.html" : "passwordResetEmail.html";
+        String subject = isRegistering ? String.format("Welcome! %s!", user.getFirstName())
+            : "Noteler Password Reset";
+
+        mailService.sendTemplatedMessage(user.getEmail(), "system@noteler.com",
+            subject, template, mailbag);
     }
 
     private User createUserForAccount(AccountModel newAccount) {
         final User user = new User();
-        user.setPassword(passwordEncoder.encode(newAccount.getPassword()));
+        String randomPass = DigestUtils.sha256Hex(Date.from(Instant.now()).toString());
+        setUserPassword(user, randomPass);
         user.setUsername(newAccount.getUsername());
         user.setFirstName(newAccount.getFirstName());
         user.setLastName(newAccount.getLastName());
@@ -121,6 +146,10 @@ public class AccountService extends BaseCrudService<AccountModel, AccountEntity,
         user.setPasswordExpirationDate(LocalDateTime.now().plusYears(99));
         user.setRoles(Collections.singletonList(roleRepository.findByName("STANDARD_USER")));
         return userRepository.save(user);
+    }
+
+    private void setUserPassword(User user, String clearTextPass) {
+        user.setPassword(passwordEncoder.encode(clearTextPass));
     }
 
     private boolean emailExists(final String email) {

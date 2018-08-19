@@ -1,29 +1,32 @@
 package com.notes.services.note;
 
-import com.notes.core.BaseEntity;
-import lombok.Data;
-
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
-import java.time.LocalDateTime;
+import lombok.Data;
 
 @Data
 @Entity
 @Table(name="note")
-public class NoteEntity extends BaseEntity {
+public class NoteEntity {
 
     @Id
-    @Column(name="id")
-    private long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false, nullable = false)
+    private Long id;
 
     @Column(name="account_id")
-    private long accountId;
+    private Long accountId;
 
-    @Column(name="note_title")
+    @Column(name="note_title", length = 512)
     private String noteTitle;
 
+    @Lob
     @Column(name="note_body")
     private String noteBody;
 

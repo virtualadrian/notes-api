@@ -1,14 +1,17 @@
 package com.notes.services.account;
 
-import com.notes.core.BaseEntity;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import lombok.Data;
-
-import javax.persistence.*;
 
 @Data
 @Entity
 @Table(name="account")
-public class AccountEntity extends BaseEntity {
+public class AccountEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

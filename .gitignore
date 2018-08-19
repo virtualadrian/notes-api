@@ -9,3 +9,5 @@ workspace.xml
 devdb:default.mv.db
 com.notes-api.iml
 *.iml
+assets/
+static/

@@ -18,7 +18,7 @@ import java.lang.reflect.Type;
  * @param <E>  the type parameter
  * @param <ID> the type parameter
  */
-public class BaseCrudService<M, E extends BaseEntity, ID extends Serializable> implements IBaseCrudService<M, ID> {
+public class BaseCrudService<M, E, ID extends Serializable> implements IBaseCrudService<M, ID> {
 
     // @formatter:off
 
@@ -67,7 +67,7 @@ public class BaseCrudService<M, E extends BaseEntity, ID extends Serializable> i
     @Override
     public M find(ID id) {
         E entity = this.repository.findOne(id);
-        return this.mapper.map(entity, modelClass);
+        return toModel(entity);
     }
 
     /**
@@ -106,8 +106,12 @@ public class BaseCrudService<M, E extends BaseEntity, ID extends Serializable> i
     public Page<M> findall(M example, int page, int pageSize) {
         // create example repository, search and page
         E sampleEntity = this.mapper.map(example, this.entityClass);
-        Iterable<E> entities = this.repository.findAll(Example.of(sampleEntity),new PageRequest(page, pageSize));
-        return this.mapper.map(entities, this.modelCollectionTypeToken);
+
+        Example<E> searchEntity = Example.of(sampleEntity);
+
+        Iterable<E> entities = this.repository.findAll(searchEntity, new PageRequest(page, pageSize));
+
+        return toPageModels(entities);
     }
 
     /**
@@ -167,7 +171,7 @@ public class BaseCrudService<M, E extends BaseEntity, ID extends Serializable> i
         this.repository.delete(id);
     }
 
-    public M toModel(E entity) {
+    protected M toModel(E entity) {
         if (entity == null) return null;
         return this.mapper.map(entity, this.modelClass);
     }
@@ -177,12 +181,18 @@ public class BaseCrudService<M, E extends BaseEntity, ID extends Serializable> i
         return this.mapper.map(model, this.entityClass);
     }
 
-    public Iterable<M> toModels(Iterable<E> entities) {
+
+    protected Page<M> toPageModels(Iterable<E> entities) {
         if (entities == null) return null;
         return this.mapper.map(entities, this.modelCollectionTypeToken);
     }
 
-    public Iterable<E> toEntities(Iterable<M> models) {
+    protected Iterable<M> toModels(Iterable<E> entities) {
+        if (entities == null) return null;
+        return this.mapper.map(entities, this.modelCollectionTypeToken);
+    }
+
+    protected Iterable<E> toEntities(Iterable<M> models) {
         if (models == null) return null;
         return this.mapper.map(models, this.entityCollectionTypeToken);
     }

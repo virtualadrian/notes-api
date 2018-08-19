@@ -19,6 +19,7 @@
     <plugin.maven-surefire.version>2.20</plugin.maven-surefire.version>
     <spring.aop.version>1.8.0</spring.aop.version>
     <docker.skip>true</docker.skip>
+    <jackson.datatype.version>2.9.6</jackson.datatype.version>
   </properties>
 
   <parent>
@@ -49,6 +50,18 @@
       <version>0.6.3</version>
     </dependency>
 
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+      <version>${jackson.datatype.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jdk8</artifactId>
+      <version>${jackson.datatype.version}</version>
+    </dependency>
+
     <!-- swagger springfox maven -->
     <dependency>
       <groupId>io.springfox</groupId>
@@ -68,7 +81,7 @@
       <artifactId>spring-boot-starter-data-jpa</artifactId>
     </dependency>
 
-    <!-- High Performance Connection Pooling -->
+    <!-- Hikari Connection Pooling -->
     <dependency>
       <groupId>com.zaxxer</groupId>
       <artifactId>HikariCP</artifactId>
@@ -114,6 +127,12 @@
     </dependency>
 
     <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>1.10</version>
+    </dependency>
+
+    <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
       <version>24.1-jre</version>
@@ -138,9 +157,22 @@
     </dependency>
 
     <dependency>
-      <groupId>com.auth0</groupId>
-      <artifactId>java-jwt</artifactId>
-      <version>3.4.0</version>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt</artifactId>
+      <version>0.9.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.passay</groupId>
+      <artifactId>passay</artifactId>
+      <version>1.3.1</version>
+    </dependency>
+
+    <!-- AWS SDK -->
+    <dependency>
+      <groupId>com.amazonaws</groupId>
+      <artifactId>aws-java-sdk</artifactId>
+      <version>1.11.389</version>
     </dependency>
 
     <!-- Lombok Awesomeness -->

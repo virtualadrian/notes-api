@@ -11,6 +11,10 @@ public class BaseController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
+    protected ResponseEntity NotFound(){
+        return new ResponseEntity(HttpStatus.NOT_FOUND);
+    }
+
     protected <T> ResponseEntity<T> Ok(T value){
         return new ResponseEntity<>(value, HttpStatus.OK);
     }
