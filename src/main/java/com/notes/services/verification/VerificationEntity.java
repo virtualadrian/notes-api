@@ -1,15 +1,18 @@
 package com.notes.services.verification;
 
-import com.notes.core.BaseEntity;
-import lombok.Data;
-
-import javax.persistence.*;
 import java.time.LocalDateTime;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import lombok.Data;
 
 @Data
 @Entity
 @Table(name="verification")
-public class VerificationEntity extends BaseEntity {
+public class VerificationEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

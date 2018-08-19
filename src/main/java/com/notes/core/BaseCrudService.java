@@ -18,7 +18,7 @@ import java.lang.reflect.Type;
  * @param <E>  the type parameter
  * @param <ID> the type parameter
  */
-public class BaseCrudService<M, E extends BaseEntity, ID extends Serializable> implements IBaseCrudService<M, ID> {
+public class BaseCrudService<M, E, ID extends Serializable> implements IBaseCrudService<M, ID> {
 
     // @formatter:off
 
