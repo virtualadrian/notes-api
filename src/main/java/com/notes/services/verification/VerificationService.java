@@ -31,21 +31,10 @@ public class VerificationService extends BaseCrudService<VerificationModel, Veri
     private VerificationRepository verificationRepository;
 
     @Autowired
-    private AccountService accountService;
-
-    @Autowired
     private UserRepository userRepository;
 
     public VerificationService() {
         super(VerificationModel.class, VerificationEntity.class);
-    }
-
-    public VerificationModel getValidOrNull(String token) {
-        return getByTokenAndExpirationDateAfter(token, LocalDateTime.now());
-    }
-
-    private VerificationModel getByToken(String token) {
-        return toModel(verificationRepository.findByToken(token));
     }
 
     private VerificationModel getByTokenAndExpirationDateAfter(String token, LocalDateTime expiration) {
