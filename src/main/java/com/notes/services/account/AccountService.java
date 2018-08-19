@@ -51,10 +51,6 @@ public class AccountService extends BaseCrudService<AccountModel, AccountEntity,
         super(AccountModel.class, AccountEntity.class);
     }
 
-    public AccountModel loadCurrentUser() {
-        return this.loadByUsername(SecurityUtil.getCurrentUserName());
-    }
-
     public AccountModel loadByUsername(String userName) {
         return this.toModel(accountRepository.findByUsername(userName));
     }
