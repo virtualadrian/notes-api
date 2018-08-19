@@ -46,7 +46,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .requestMatchers()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/account/register/**", "/app/account/register").permitAll()
+                .antMatchers("/account/register/**", "/account/password/**").permitAll()
                 .anyRequest().authenticated();
         } else {
             http.authorizeRequests().anyRequest().permitAll();

@@ -25,7 +25,7 @@ public class AccountController extends BaseController {
     @RequestMapping(value = "/register/confirm", method = RequestMethod.POST)
     public ResponseEntity confirmRegistration(
         @RequestBody final AccountConfirmationModel confirmation) {
-        if (accountService.checkTokenAndEnableUser(confirmation)) {
+        if (accountService.resetUserPassword(confirmation)) {
             return Ok();
         } else {
             return Conflict(new AccountMessage(AccountMessageType.ACCOUNT_ACTIVATION_INVALID,
@@ -33,10 +33,32 @@ public class AccountController extends BaseController {
         }
     }
 
+    @RequestMapping(value = "/password/reset/send", method = RequestMethod.POST)
+    public ResponseEntity sendPasswordReset(
+        @RequestBody final AccountModel account) {
+        if (accountService.sendPasswordReset(account)) {
+            return Ok();
+        } else {
+            return Conflict(new AccountMessage(AccountMessageType.ACCOUNT_EMAIL_INVALID,
+                "Could not reset the password."));
+        }
+    }
+
     @RequestMapping(value = "/password/set", method = RequestMethod.PUT)
     public ResponseEntity updatePassword(
         @RequestBody final AccountPasswordModel passwordModel) {
-        if (accountService.updateUserPassword(passwordModel)) {
+        if (accountService.updateCurrentUserPassword(passwordModel)) {
+            return Ok();
+        } else {
+            return Conflict(new AccountMessage(AccountMessageType.ACCOUNT_ACTIVATION_INVALID,
+                "Could not change the password."));
+        }
+    }
+
+    @RequestMapping(value = "/password/reset", method = RequestMethod.PUT)
+    public ResponseEntity passwordResetSet(
+        @RequestBody final AccountConfirmationModel confirmationModel) {
+        if (accountService.resetUserPassword(confirmationModel)) {
             return Ok();
         } else {
             return Conflict(new AccountMessage(AccountMessageType.ACCOUNT_ACTIVATION_INVALID,
