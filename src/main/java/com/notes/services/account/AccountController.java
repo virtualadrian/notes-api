@@ -13,7 +13,7 @@ public class AccountController extends BaseController {
     @Autowired
     private AccountService accountService;
 
-    @RequestMapping(value="/register", method = RequestMethod.POST)
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ResponseEntity register(@RequestBody final AccountModel registering) {
         try {
             return Ok(accountService.createNewDisabledAccount(registering));
@@ -22,34 +22,26 @@ public class AccountController extends BaseController {
         }
     }
 
-    @RequestMapping(value="/register/confirm/{token}", method = RequestMethod.POST)
-    public ResponseEntity confirmRegistration(@PathVariable("token") final String token) {
-        return accountService.checkTokenAndEnableUser(token) ?
-            Ok() :
-            Conflict(new AccountMessage(AccountMessageType.ACCOUNT_ACTIVATION_INVALID, "Invalid Token."));
+    @RequestMapping(value = "/register/confirm", method = RequestMethod.POST)
+    public ResponseEntity confirmRegistration(
+        @RequestBody final AccountConfirmationModel confirmation) {
+        if (accountService.checkTokenAndEnableUser(confirmation)) {
+            return Ok();
+        } else {
+            return Conflict(new AccountMessage(AccountMessageType.ACCOUNT_ACTIVATION_INVALID,
+                "Could not activate the account."));
+        }
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<Iterable<AccountModel>> getAll() {
-        return Ok(accountService.findall(0, 1));
-    }
-
-    @RequestMapping(value = "/{page}/{pageSize}", method = RequestMethod.GET)
-    public ResponseEntity<Iterable<AccountModel>> getAll(
-        @PathVariable("page") int page,
-        @PathVariable("pageSize") int pageSize) {
-        return Ok(accountService.findall(page, pageSize));
-    }
-
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    @PreAuthorize("hasAuthority('ADMIN_USER')")
-    public ResponseEntity<AccountModel> get(@PathVariable("id") long id) {
-        return Ok(accountService.find(id));
-    }
-
-    @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<AccountModel> create(@RequestBody final AccountModel creating) {
-        return Ok(accountService.create(creating));
+    @RequestMapping(value = "/password/set", method = RequestMethod.PUT)
+    public ResponseEntity updatePassword(
+        @RequestBody final AccountPasswordModel passwordModel) {
+        if (accountService.updateUserPassword(passwordModel)) {
+            return Ok();
+        } else {
+            return Conflict(new AccountMessage(AccountMessageType.ACCOUNT_ACTIVATION_INVALID,
+                "Could not change the password."));
+        }
     }
 
     @RequestMapping(method = RequestMethod.PUT)
@@ -57,9 +49,9 @@ public class AccountController extends BaseController {
         return Ok(accountService.update(updating));
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity delete(@PathVariable("id") long id) {
-        accountService.delete(id);
-        return Ok();
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @PreAuthorize("hasAuthority('ADMIN_USER')")
+    public ResponseEntity<AccountModel> get(@PathVariable("id") long id) {
+        return Ok(accountService.find(id));
     }
 }

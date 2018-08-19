@@ -55,6 +55,7 @@ spring:
       idle-timeout: 10000
     initialize: true
   webapp:
+    web-url: localhost:8080
     cors:
       origins: "*"
   assets:
@@ -64,8 +65,8 @@ spring:
       static-locations: ./assets/uploads
   http:
     multipart:
-      max-file-size: 5MB
-      max-request-size: 5MB
+      max-file-size: 15MB
+      max-request-size: 15MB
 ---
 spring:
   profiles: devmysql
@@ -120,6 +121,7 @@ spring:
       idle-timeout: 10000
     initialize: true
   webapp:
+    web-url: localhost:8080
     cors:
       origins: "*"
   assets:
@@ -129,8 +131,8 @@ spring:
     static-locations: ./assets/uploads
   http:
     multipart:
-      max-file-size: 5MB
-      max-request-size: 5MB
+      max-file-size: 15MB
+      max-request-size: 15MB
 ---
 spring:
   aop:
@@ -174,6 +176,19 @@ spring:
       maximumPoolSize: 100
       idle-timeout: 10000
     initialize: true
+  webapp:
+    web-url: noteler.com
+    cors:
+      origins: "*"
+  assets:
+    static:
+      path: ./assets/uploads
+  resources:
+    static-locations: ./assets/uploads
+  http:
+    multipart:
+      max-file-size: 15MB
+      max-request-size: 15MB
 ---
 security:
   oauth2:
@@ -183,6 +198,3 @@ security:
   security-realm: Loyalty_API_WEB
   jwt:
     resource-ids: loyalty_api_web_resourceid
-site:
-  settings:
-    web-url: http://localhost:8080
