@@ -11,6 +11,7 @@ public class NoteModel {
     private Long accountId;
     private String noteTitle;
     private String noteBody;
+    private String noteTags;
     private Boolean isPrivate;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdTime;

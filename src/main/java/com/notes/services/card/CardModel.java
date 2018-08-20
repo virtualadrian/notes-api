@@ -2,7 +2,6 @@ package com.notes.services.card;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
-import javax.persistence.Column;
 import lombok.Data;
 
 @Data

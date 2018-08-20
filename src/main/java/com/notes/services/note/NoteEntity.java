@@ -30,6 +30,10 @@ public class NoteEntity {
     @Column(name="note_body")
     private String noteBody;
 
+    @Lob
+    @Column(name="note_tags")
+    private String noteTags;
+
     @Column(name="is_private")
     private Boolean isPrivate;
 

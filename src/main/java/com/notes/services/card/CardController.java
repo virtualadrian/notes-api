@@ -28,7 +28,7 @@ public class CardController extends BaseController {
         CardModel created = cardService.createForCurrentUser(creating);
         return created != null ?
             Ok(created) :
-            Conflict(new ApplicationMessage("Not created", "Couldn't Create Note."));
+            Conflict(new ApplicationMessage("Not created", "Couldn't Create Card."));
     }
 
     @RequestMapping(method = RequestMethod.PUT)
