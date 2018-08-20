@@ -2,7 +2,9 @@ package com.notes.services.note;
 
 import com.notes.core.BaseCrudService;
 import com.notes.security.util.SecurityUtil;
+import java.time.ZoneOffset;
 import java.util.List;
+import java.util.TimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,7 +26,7 @@ public class NoteService extends BaseCrudService<NoteModel, NoteEntity, Long> {
     NoteModel createForCurrentUser(NoteModel newNote) {
 
         newNote.setAccountId(SecurityUtil.getCurrentUserAccountId());
-        newNote.setNoteCreatedTime(LocalDateTime.now());
+        newNote.setCreatedTime(LocalDateTime.now(ZoneOffset.UTC));
 
         return create(newNote);
     }
@@ -34,6 +36,10 @@ public class NoteService extends BaseCrudService<NoteModel, NoteEntity, Long> {
         search.setAccountId(SecurityUtil.getCurrentUserAccountId());
 
         return this.findall(search, page, pageSize);
+    }
+
+    NoteModel findSharedNote(final Long noteId) {
+        return toModel(noteRepository.findByIdAndIsPrivateIsTrue(noteId));
     }
 
     Page<NoteModel> findAllForCurrentUserByTerm(String term, int page, int pageSize) {

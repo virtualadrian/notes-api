@@ -1,4 +1,4 @@
-package com.notes.services.note;
+package com.notes.services.sharednote;
 
 import java.time.LocalDateTime;
 import javax.persistence.Column;
@@ -12,27 +12,20 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name="note")
-public class NoteEntity {
+@Table(name="shared_note")
+public class SharedNoteEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @Column(name="account_id")
-    private Long accountId;
+    @Column(name="note_id")
+    private Long noteId;
 
-    @Column(name="note_title", length = 512)
-    private String noteTitle;
+    @Column(name="share_expires")
+    private LocalDateTime shareExpires;
 
-    @Lob
-    @Column(name="note_body")
-    private String noteBody;
-
-    @Column(name="is_private")
-    private Boolean isPrivate;
-
-    @Column(name="created_ts")
-    private LocalDateTime createdTime;
+    @Column(name="note_created_ts")
+    private LocalDateTime noteCreatedTime;
 }

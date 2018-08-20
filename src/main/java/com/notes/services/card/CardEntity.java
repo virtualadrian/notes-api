@@ -1,4 +1,4 @@
-package com.notes.services.note;
+package com.notes.services.card;
 
 import java.time.LocalDateTime;
 import javax.persistence.Column;
@@ -12,8 +12,8 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name="note")
-public class NoteEntity {
+@Table(name="card")
+public class CardEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,15 +23,24 @@ public class NoteEntity {
     @Column(name="account_id")
     private Long accountId;
 
-    @Column(name="note_title", length = 512)
-    private String noteTitle;
+    @Column(name="deck_id")
+    private Long deckId;
+
+    @Column(name="card_question")
+    private String cardQuestion;
 
     @Lob
-    @Column(name="note_body")
-    private String noteBody;
+    @Column(name="card_answer")
+    private String cardAnswer;
 
-    @Column(name="is_private")
-    private Boolean isPrivate;
+    @Column(name="card_difficulty_id")
+    private String cardDifficultyId;
+
+    @Column(name="card_rating_id")
+    private String cardRatingId;
+
+    @Column(name="original_note_id")
+    private Long originNoteId;
 
     @Column(name="created_ts")
     private LocalDateTime createdTime;
