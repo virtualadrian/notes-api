@@ -15,4 +15,5 @@ public class NoteModel {
     private Boolean isPrivate;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdTime;
+    private Long clonedFromNoteId;
 }

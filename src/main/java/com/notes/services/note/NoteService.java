@@ -24,17 +24,14 @@ public class NoteService extends BaseCrudService<NoteModel, NoteEntity, Long> {
     }
 
     NoteModel createForCurrentUser(NoteModel newNote) {
-
         newNote.setAccountId(SecurityUtil.getCurrentUserAccountId());
         newNote.setCreatedTime(LocalDateTime.now(ZoneOffset.UTC));
-
         return create(newNote);
     }
 
     Iterable<NoteModel> findAllForCurrentUser(int page, int pageSize) {
         NoteModel search = new NoteModel();
         search.setAccountId(SecurityUtil.getCurrentUserAccountId());
-
         return this.findall(search, page, pageSize);
     }
 
@@ -48,7 +45,13 @@ public class NoteService extends BaseCrudService<NoteModel, NoteEntity, Long> {
             .findAllByAccountIdAndNoteBodyContainsOrNoteTitleContains(
                 SecurityUtil.getCurrentUserAccountId(), term, term,
                 pageRequest);
-
         return toPageModels(noteEntityList);
+    }
+
+    NoteModel cloneNote(NoteModel from) {
+        from.setClonedFromNoteId(from.getId());
+        from.setAccountId(SecurityUtil.getCurrentUserAccountId());
+        from.setId(null);
+        return create(from);
     }
 }

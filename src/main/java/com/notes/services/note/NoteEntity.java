@@ -39,4 +39,8 @@ public class NoteEntity {
 
     @Column(name="created_ts")
     private LocalDateTime createdTime;
+
+    @Column(name="cloned_from_note_id")
+    private Long clonedFromNoteId;
+
 }

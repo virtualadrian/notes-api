@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/note")
 public class NoteController extends BaseController {
 
+    private final NoteService noteService;
+
     @Autowired
-    private NoteService noteService;
+    public NoteController(NoteService noteService) {this.noteService = noteService;}
 
     @RequestMapping(value ="/shared/{noteId}", method = RequestMethod.GET)
     public ResponseEntity<NoteModel> getPublicNote(@PathVariable("noteId") Long noteId) {
@@ -54,6 +56,14 @@ public class NoteController extends BaseController {
         return created != null ?
             Ok(created) :
             Conflict(new ApplicationMessage("Not created", "Couldn't Create Note."));
+    }
+
+    @RequestMapping(value="clone", method = RequestMethod.POST)
+    public ResponseEntity clone(@RequestBody final NoteModel from) {
+        NoteModel clone = noteService.cloneNote(from);
+        return clone != null ?
+            Ok(clone) :
+            Conflict(new ApplicationMessage("Not created", "Couldn't Clone Note."));
     }
 
     @RequestMapping(method = RequestMethod.PUT)
