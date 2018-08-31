@@ -25,6 +25,27 @@ public class ProfileEntity {
     @Column(name="profile_biography")
     private String profileBiography;
 
+    @Column(name = "profile_url")
+    private String profileUrl;
+
+    @Column(name = "profile_company")
+    private String profileCompany;
+
+    @Column(name = "profile_location")
+    private String profileLocation;
+
+    @Column(name = "profile_twitter")
+    private String profileTwitter;
+
+    @Column(name = "profile_linked_in")
+    private String profileLinkedIn;
+
+    @Column(name = "profile_facebook")
+    private String profileFacebook;
+
+    @Column(name = "profile_google_plus")
+    private String profileGooglePlus;
+
     @Column(name="profile_avatar")
     private String profileAvatar;
 
