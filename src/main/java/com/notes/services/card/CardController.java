@@ -41,4 +41,13 @@ public class CardController extends BaseController {
         cardService.delete(id);
         return Ok();
     }
+
+
+    @RequestMapping(value = "/sendstuff", method = RequestMethod.POST)
+    public ResponseEntity sendStuff() {
+        cardService.sendMail();
+        return Ok();
+    }
+
+
 }
