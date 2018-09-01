@@ -1,4 +1,4 @@
-package com.notes.services.carddeck;
+package com.notes.services.course;
 
 import java.time.LocalDateTime;
 import javax.persistence.Column;
@@ -12,7 +12,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name="card_deck")
-public class CardDeckEntity {
+public class CourseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,14 +22,11 @@ public class CardDeckEntity {
     @Column(name="account_id")
     private Long accountId;
 
-    @Column(name="course_id")
-    private String courseId;
+    @Column(name="course_name")
+    private String courseName;
 
-    @Column(name="deck_name")
-    private String deckName;
-
-    @Column(name="deck_description")
-    private String deckDescription;
+    @Column(name="course_code")
+    private String courseCode;
 
     @Column(name="created_ts")
     private LocalDateTime createdTime;

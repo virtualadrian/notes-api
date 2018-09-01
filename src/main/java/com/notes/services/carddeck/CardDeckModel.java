@@ -8,7 +8,7 @@ public class CardDeckModel {
     private Long id;
     private Long accountId;
     private String courseId;
-    private String cardQuestion;
+    private String deckName;
     private String deckDescription;
     private LocalDateTime createdTime;
 }
