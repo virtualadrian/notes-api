@@ -31,16 +31,16 @@ public class CardService extends BaseCrudService<CardModel, CardEntity, Long> {
         return create(creating);
     }
 
-    Iterable<CardModel> findAllForCurrentUser(int page, int pageSize) {
+    Iterable<CardModel> getAllForCurrent(int page, int pageSize) {
         CardModel search = new CardModel();
         search.setAccountId(SecurityUtil.getCurrentUserAccountId());
         return this.findall(search, page, pageSize);
     }
 
-    public void sendMail() {
-        Map<String, Object> mailbag = new HashMap<>();
-
-        mailService.sendTemplatedMessage("adrian@adrian.work", "information@noteler.com",
-            "test email", "testEmail.html", mailbag);
+    Iterable<CardModel> getAllForCurrentUserDeck(Long deckId) {
+        CardModel search = new CardModel();
+        search.setDeckId(deckId);
+        search.setAccountId(SecurityUtil.getCurrentUserAccountId());
+        return this.findall(search);
     }
 }

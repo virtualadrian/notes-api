@@ -11,5 +11,9 @@ public interface NoteRepository extends JpaRepository<NoteEntity, Long> {
     Page<NoteEntity> findAllByAccountIdAndNoteBodyContainsOrNoteTitleContains(final Long accountId,
         final String searchTerm, final String searchTitle, Pageable pageable);
 
-    NoteEntity findByIdAndIsPrivateIsTrue(final Long id);
+    NoteEntity findByIdAndIsPrivateIsTrueOrderByPinIndex(final Long id);
+
+    NoteEntity findAllByAccountIdOrderByNoteOrderIndexDescPinIndexAscIdDesc(final Long accountId);
+
+    NoteEntity findByIdAndIsPrivateIsTrueOrderByNoteOrderIndexDescPinIndexAscIdDesc(final Long Id);
 }

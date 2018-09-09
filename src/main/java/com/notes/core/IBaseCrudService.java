@@ -3,6 +3,7 @@ package com.notes.core;
 import org.springframework.data.domain.Page;
 
 import java.io.Serializable;
+import org.springframework.data.domain.Sort.Direction;
 
 /**
  * The interface Base crud service.
@@ -37,6 +38,12 @@ public interface IBaseCrudService<M, ID extends Serializable> {
     Page<M> findall(int page, int pageSize);
 
     /**
+     * Find All not paged.
+     * @return the iterable
+     */
+    Iterable<M> findall(M example);
+
+    /**
      * All iterable.
      *
      * @param example  the example
@@ -45,6 +52,19 @@ public interface IBaseCrudService<M, ID extends Serializable> {
      * @return the iterable
      */
     Page<M> findall(M example, int page, int pageSize);
+
+    /**
+     * All iterable.
+     *
+     * @param example  the example
+     * @param page     the page
+     * @param pageSize the page size
+     * @param direction Sort Direction
+     * @param properties String parameter list of properties to sort on
+     * @return the iterable
+     */
+    Page<M> findSortAll(M example, int page, int pageSize, Direction direction,
+        String... properties);
 
     /**
      * Create m.

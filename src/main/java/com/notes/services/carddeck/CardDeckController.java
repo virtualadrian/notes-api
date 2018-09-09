@@ -22,7 +22,22 @@ public class CardDeckController extends BaseController {
         return Ok(cardDeckService.find(id));
     }
 
-    @RequestMapping(value="", method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.GET)
+    public ResponseEntity<Iterable<CardDeckModel>> getAllForCurrentUser() {
+        Iterable<CardDeckModel> userDecks = cardDeckService.getAllForCurrentUser();
+        return Ok(userDecks);
+    }
+
+    @RequestMapping(value = "/{page}/{pageSize}", method = RequestMethod.GET)
+    public ResponseEntity<Iterable<CardDeckModel>> getAllForCurrentUserPaged(
+        @PathVariable("page") int page,
+        @PathVariable("pageSize") int pageSize) {
+        Iterable<CardDeckModel> userDecks = cardDeckService
+            .getAllForCurrentUserPaged(page, pageSize);
+        return Ok(userDecks);
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity createForCurrentUser(@RequestBody final CardDeckModel creating) {
         CardDeckModel created = cardDeckService.createForCurrentUser(creating);
         return created != null ?

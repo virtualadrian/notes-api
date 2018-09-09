@@ -19,7 +19,7 @@ public class NoteController extends BaseController {
     @Autowired
     public NoteController(NoteService noteService) {this.noteService = noteService;}
 
-    @RequestMapping(value ="/shared/{noteId}", method = RequestMethod.GET)
+    @RequestMapping(value ="/public/{noteId}", method = RequestMethod.GET)
     public ResponseEntity<NoteModel> getPublicNote(@PathVariable("noteId") Long noteId) {
         return Ok(noteService.findSharedNote(noteId));
     }
@@ -58,12 +58,27 @@ public class NoteController extends BaseController {
             Conflict(new ApplicationMessage("Not created", "Couldn't Create Note."));
     }
 
-    @RequestMapping(value="clone", method = RequestMethod.POST)
-    public ResponseEntity clone(@RequestBody final NoteModel from) {
+    @RequestMapping(value="/duplicate", method = RequestMethod.POST)
+    public ResponseEntity duplicate(@RequestBody final NoteModel from) {
         NoteModel clone = noteService.cloneNote(from);
         return clone != null ?
             Ok(clone) :
             Conflict(new ApplicationMessage("Not created", "Couldn't Clone Note."));
+    }
+
+    @RequestMapping(value="/archive", method = RequestMethod.PUT)
+    public ResponseEntity archive(@RequestBody final NoteModel arvhiving) {
+        return Ok(noteService.archiveNote(arvhiving));
+    }
+
+    @RequestMapping(value="/pin", method = RequestMethod.PUT)
+    public ResponseEntity<NoteModel> createPinned(@RequestBody final NoteModel updating) {
+        return Ok(noteService.createPinned(updating));
+    }
+
+    @RequestMapping(value="/favorite", method = RequestMethod.PUT)
+    public ResponseEntity<NoteModel> createFavorite(@RequestBody final NoteModel updating) {
+        return Ok(noteService.createFavorite(updating));
     }
 
     @RequestMapping(method = RequestMethod.PUT)

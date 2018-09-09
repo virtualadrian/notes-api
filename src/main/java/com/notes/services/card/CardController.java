@@ -22,7 +22,14 @@ public class CardController extends BaseController {
         return Ok(cardService.find(id));
     }
 
-    @RequestMapping(value="", method = RequestMethod.POST)
+    @RequestMapping(value = "/deck/{deckId}", method = RequestMethod.GET)
+    public ResponseEntity<Iterable<CardModel>> getAllForCurrentUserDeck(
+        @PathVariable("deckId") final Long deckId) {
+        Iterable<CardModel> deckCards = cardService.getAllForCurrentUserDeck(deckId);
+        return Ok(deckCards);
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity createForCurrentUser(@RequestBody final CardModel creating) {
 
         CardModel created = cardService.createForCurrentUser(creating);
@@ -41,13 +48,4 @@ public class CardController extends BaseController {
         cardService.delete(id);
         return Ok();
     }
-
-
-    @RequestMapping(value = "/sendstuff", method = RequestMethod.POST)
-    public ResponseEntity sendStuff() {
-        cardService.sendMail();
-        return Ok();
-    }
-
-
 }

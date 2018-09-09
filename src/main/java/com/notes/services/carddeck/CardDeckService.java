@@ -24,9 +24,15 @@ public class CardDeckService extends BaseCrudService<CardDeckModel, CardDeckEnti
         return create(creating);
     }
 
-    Iterable<CardDeckModel> findAllForCurrentUser(int page, int pageSize) {
+    Iterable<CardDeckModel> getAllForCurrentUserPaged(int page, int pageSize) {
         CardDeckModel search = new CardDeckModel();
         search.setAccountId(SecurityUtil.getCurrentUserAccountId());
         return this.findall(search, page, pageSize);
+    }
+
+    Iterable<CardDeckModel> getAllForCurrentUser() {
+        CardDeckModel search = new CardDeckModel();
+        search.setAccountId(SecurityUtil.getCurrentUserAccountId());
+        return this.findall(search);
     }
 }

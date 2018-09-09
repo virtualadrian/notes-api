@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.io.Serializable;
@@ -14,8 +16,8 @@ import java.lang.reflect.Type;
 /**
  * The type Base crud service.
  *
- * @param <M>  the type parameter
- * @param <E>  the type parameter
+ * @param <M> the type parameter
+ * @param <E> the type parameter
  * @param <ID> the type parameter
  */
 public class BaseCrudService<M, E, ID extends Serializable> implements IBaseCrudService<M, ID> {
@@ -51,7 +53,7 @@ public class BaseCrudService<M, E, ID extends Serializable> implements IBaseCrud
     /**
      * Instantiates a new Base dao.
      *
-     * @param modelClass  the model class
+     * @param modelClass the model class
      * @param entityClass the repository class
      */
     public BaseCrudService(Class<M> modelClass, Class<E> entityClass) {
@@ -61,6 +63,7 @@ public class BaseCrudService<M, E, ID extends Serializable> implements IBaseCrud
 
     /**
      * find one by the id
+     *
      * @param id the id
      * @return Model of M
      */
@@ -84,7 +87,7 @@ public class BaseCrudService<M, E, ID extends Serializable> implements IBaseCrud
     /**
      * All iterable.
      *
-     * @param page     the page
+     * @param page the page
      * @param pageSize the page size
      * @return the iterable
      */
@@ -97,8 +100,8 @@ public class BaseCrudService<M, E, ID extends Serializable> implements IBaseCrud
     /**
      * All iterable.
      *
-     * @param example  the example
-     * @param page     the page
+     * @param example the example
+     * @param page the page
      * @param pageSize the page size
      * @return the iterable
      */
@@ -109,13 +112,51 @@ public class BaseCrudService<M, E, ID extends Serializable> implements IBaseCrud
 
         Example<E> searchEntity = Example.of(sampleEntity);
 
-        Iterable<E> entities = this.repository.findAll(searchEntity, new PageRequest(page, pageSize));
+        Iterable<E> entities = this.repository
+            .findAll(searchEntity, new PageRequest(page, pageSize));
 
         return toPageModels(entities);
     }
 
     /**
+     * All iterable.
+     *
+     * @param example the example
+     * @param page the page
+     * @param pageSize the page size
+     * @return the iterable
+     */
+    @Override
+    public Page<M> findSortAll(M example, int page, int pageSize, Direction direction,
+        String... properties) {
+        // create example repository, search and page
+        E sampleEntity = this.mapper.map(example, this.entityClass);
+
+        Example<E> searchEntity = Example.of(sampleEntity);
+
+        Iterable<E> entities = this.repository.findAll(searchEntity,
+            new PageRequest(page, pageSize, new Sort(direction, properties)));
+
+        return toPageModels(entities);
+    }
+
+    /**
+     * Find all not paged
+     *
+     * @param example the example
+     * @return the iterable
+     */
+    @Override
+    public Iterable<M> findall(M example) {
+        E sampleEntity = this.mapper.map(example, this.entityClass);
+        Example<E> searchEntity = Example.of(sampleEntity);
+        Iterable<E> entities = this.repository.findAll(searchEntity);
+        return toModels(entities);
+    }
+
+    /**
      * Model to instert
+     *
      * @param creating the creating
      * @return created Model of M
      */
@@ -128,6 +169,7 @@ public class BaseCrudService<M, E, ID extends Serializable> implements IBaseCrud
 
     /**
      * Create a new collection
+     *
      * @param creating the creating
      * @return created Model Collection of M
      */
@@ -140,6 +182,7 @@ public class BaseCrudService<M, E, ID extends Serializable> implements IBaseCrud
 
     /**
      * Update one
+     *
      * @param updating the updating
      * @return updated Model of M
      */
@@ -152,17 +195,20 @@ public class BaseCrudService<M, E, ID extends Serializable> implements IBaseCrud
 
     /**
      * Update the collection
+     *
      * @param updating the updating
      * @return updated Collection Model of M
      */
     @Override
     public Iterable<M> update(Iterable<M> updating) {
         Iterable<E> entitiesUpdating = this.mapper.map(updating, this.entityCollectionTypeToken);
-        return this.mapper.map(this.repository.save(entitiesUpdating), this.modelCollectionTypeToken);
+        return this.mapper
+            .map(this.repository.save(entitiesUpdating), this.modelCollectionTypeToken);
     }
 
     /**
      * Delete one
+     *
      * @param id the id
      */
     @Override
@@ -172,28 +218,28 @@ public class BaseCrudService<M, E, ID extends Serializable> implements IBaseCrud
     }
 
     protected M toModel(E entity) {
-        if (entity == null) return null;
+        if (entity == null) { return null; }
         return this.mapper.map(entity, this.modelClass);
     }
 
     public E toEntity(M model) {
-        if (model == null) return null;
+        if (model == null) { return null; }
         return this.mapper.map(model, this.entityClass);
     }
 
 
     protected Page<M> toPageModels(Iterable<E> entities) {
-        if (entities == null) return null;
+        if (entities == null) { return null; }
         return this.mapper.map(entities, this.modelCollectionTypeToken);
     }
 
     protected Iterable<M> toModels(Iterable<E> entities) {
-        if (entities == null) return null;
+        if (entities == null) { return null; }
         return this.mapper.map(entities, this.modelCollectionTypeToken);
     }
 
     protected Iterable<E> toEntities(Iterable<M> models) {
-        if (models == null) return null;
+        if (models == null) { return null; }
         return this.mapper.map(models, this.entityCollectionTypeToken);
     }
     // @formatter:on

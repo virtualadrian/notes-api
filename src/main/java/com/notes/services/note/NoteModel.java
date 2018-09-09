@@ -1,6 +1,7 @@
 package com.notes.services.note;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.Instant;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -12,8 +13,11 @@ public class NoteModel {
     private String noteTitle;
     private String noteBody;
     private String noteTags;
+    private Long favoriteIndex;
+    private Long pinIndex;
+    private Long noteOrderIndex;
     private Boolean isPrivate;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime archivedTime;
     private LocalDateTime createdTime;
     private Long clonedFromNoteId;
 }

@@ -34,8 +34,20 @@ public class NoteEntity {
     @Column(name="note_tags")
     private String noteTags;
 
+    @Column(name="favorite_index")
+    private Long favoriteIndex;
+
+    @Column(name="pin_index")
+    private Long pinIndex;
+
+    @Column(name="note_order_index")
+    private Long noteOrderIndex;
+
     @Column(name="is_private")
     private Boolean isPrivate;
+
+    @Column(name="archived_ts")
+    private LocalDateTime archivedTime;
 
     @Column(name="created_ts")
     private LocalDateTime createdTime;
