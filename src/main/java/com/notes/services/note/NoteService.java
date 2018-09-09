@@ -28,7 +28,6 @@ public class NoteService extends BaseCrudService<NoteModel, NoteEntity, Long> {
     NoteModel createForCurrentUser(NoteModel newNote) {
         newNote.setAccountId(SecurityUtil.getCurrentUserAccountId());
         newNote.setCreatedTime(LocalDateTime.now(ZoneOffset.UTC));
-
         newNote.setNoteOrderIndex(Instant.now().getEpochSecond());
 
         return create(newNote);
@@ -37,8 +36,16 @@ public class NoteService extends BaseCrudService<NoteModel, NoteEntity, Long> {
     Iterable<NoteModel> findAllForCurrentUser(int page, int pageSize) {
         NoteModel search = new NoteModel();
         search.setAccountId(SecurityUtil.getCurrentUserAccountId());
+        search.setArchivedTime(null);
         return this.findSortAll(search, page, pageSize,
             Direction.DESC, "noteOrderIndex", "id");
+    }
+
+    Iterable<NoteModel> findNonArchivedForCurrentUser(int page, int pageSize) {
+        Long accountId = SecurityUtil.getCurrentUserAccountId();
+        return toModels(noteRepository
+            .findAllByAccountIdAndArchivedTimeIsNullOrderByNoteOrderIndexDesc(accountId,
+                new PageRequest(page, pageSize)));
     }
 
     NoteModel findSharedNote(final Long noteId) {

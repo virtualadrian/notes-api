@@ -19,21 +19,22 @@ public class NoteController extends BaseController {
     @Autowired
     public NoteController(NoteService noteService) {this.noteService = noteService;}
 
-    @RequestMapping(value ="/public/{noteId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/public/{noteId}", method = RequestMethod.GET)
     public ResponseEntity<NoteModel> getPublicNote(@PathVariable("noteId") Long noteId) {
         return Ok(noteService.findSharedNote(noteId));
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<Iterable<NoteModel>> getAll() {
-        Iterable<NoteModel> userNotes = noteService.findAllForCurrentUser(0, 100);
+        Iterable<NoteModel> userNotes =
+            noteService.findNonArchivedForCurrentUser(0, 100);
         return Ok(userNotes);
     }
 
     @RequestMapping(value = "/{page}/{pageSize}", method = RequestMethod.GET)
     public ResponseEntity<Iterable<NoteModel>> getAll(@PathVariable("page") int page,
         @PathVariable("pageSize") int pageSize) {
-        Iterable<NoteModel> userNotes = noteService.findAllForCurrentUser(page, pageSize);
+        Iterable<NoteModel> userNotes = noteService.findNonArchivedForCurrentUser(page, pageSize);
         return Ok(userNotes);
     }
 
@@ -58,7 +59,7 @@ public class NoteController extends BaseController {
             Conflict(new ApplicationMessage("Not created", "Couldn't Create Note."));
     }
 
-    @RequestMapping(value="/duplicate", method = RequestMethod.POST)
+    @RequestMapping(value = "/duplicate", method = RequestMethod.POST)
     public ResponseEntity duplicate(@RequestBody final NoteModel from) {
         NoteModel clone = noteService.cloneNote(from);
         return clone != null ?
@@ -66,17 +67,17 @@ public class NoteController extends BaseController {
             Conflict(new ApplicationMessage("Not created", "Couldn't Clone Note."));
     }
 
-    @RequestMapping(value="/archive", method = RequestMethod.PUT)
-    public ResponseEntity archive(@RequestBody final NoteModel arvhiving) {
-        return Ok(noteService.archiveNote(arvhiving));
+    @RequestMapping(value = "/archive", method = RequestMethod.PUT)
+    public ResponseEntity archive(@RequestBody final NoteModel archiving) {
+        return Ok(noteService.archiveNote(archiving));
     }
 
-    @RequestMapping(value="/pin", method = RequestMethod.PUT)
+    @RequestMapping(value = "/pin", method = RequestMethod.PUT)
     public ResponseEntity<NoteModel> createPinned(@RequestBody final NoteModel updating) {
         return Ok(noteService.createPinned(updating));
     }
 
-    @RequestMapping(value="/favorite", method = RequestMethod.PUT)
+    @RequestMapping(value = "/favorite", method = RequestMethod.PUT)
     public ResponseEntity<NoteModel> createFavorite(@RequestBody final NoteModel updating) {
         return Ok(noteService.createFavorite(updating));
     }
