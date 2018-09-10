@@ -1,5 +1,7 @@
 package com.notes.services.note;
 
+import static com.notes.services.note.NoteFilter.*;
+
 import com.notes.core.BaseCrudService;
 import com.notes.security.util.SecurityUtil;
 import java.time.Instant;
@@ -39,6 +41,33 @@ public class NoteService extends BaseCrudService<NoteModel, NoteEntity, Long> {
         search.setArchivedTime(null);
         return this.findSortAll(search, page, pageSize,
             Direction.DESC, "noteOrderIndex", "id");
+    }
+
+    Iterable<NoteModel> filterForCurrentUser(String term, int page, int pageSize) {
+        Long accountId = SecurityUtil.getCurrentUserAccountId();
+        switch (NoteFilter.valueOf(term)) {
+            case ARCHIVED:
+                return toModels(noteRepository
+                    .findAllByAccountIdAndArchivedTimeIsNotNullOrderByNoteOrderIndexDesc(accountId,
+                        new PageRequest(page, pageSize)));
+            case FAVORITES:
+                Iterable<NoteEntity> entities = noteRepository
+                    .findAllByAccountIdAndArchivedTimeIsNullAndFavoriteIndexIsNotNullOrderByNoteOrderIndexDesc(accountId,
+                        new PageRequest(page, pageSize));
+                return toModels(entities);
+            case PINNED:
+                return toModels(noteRepository
+                    .findAllByAccountIdAndArchivedTimeIsNullAndPinIndexIsNotNullOrderByNoteOrderIndexDesc(accountId,
+                        new PageRequest(page, pageSize)));
+            case TRASH:
+                return toModels(noteRepository
+                    .findAllByAccountIdDeleted(accountId,
+                        new PageRequest(page, pageSize)));
+            default:
+                return toModels(noteRepository
+                    .findAllByAccountIdAndArchivedTimeIsNullOrderByNoteOrderIndexDesc(accountId,
+                        new PageRequest(page, pageSize)));
+        }
     }
 
     Iterable<NoteModel> findNonArchivedForCurrentUser(int page, int pageSize) {

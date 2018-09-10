@@ -24,10 +24,10 @@ public class NoteController extends BaseController {
         return Ok(noteService.findSharedNote(noteId));
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<Iterable<NoteModel>> getAll() {
+    @RequestMapping(value="/filter/{term}", method = RequestMethod.GET)
+    public ResponseEntity<Iterable<NoteModel>> getAll(@PathVariable final String term) {
         Iterable<NoteModel> userNotes =
-            noteService.findNonArchivedForCurrentUser(0, 100);
+            noteService.filterForCurrentUser(term,0, 100);
         return Ok(userNotes);
     }
 

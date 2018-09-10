@@ -9,10 +9,12 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 import lombok.Data;
+import org.hibernate.annotations.Where;
 
 @Data
 @Entity
 @Table(name="note")
+@Where(clause="deleted_ts IS NULL")
 public class NoteEntity {
 
     @Id
@@ -48,6 +50,9 @@ public class NoteEntity {
 
     @Column(name="archived_ts")
     private LocalDateTime archivedTime;
+
+    @Column(name="deleted_ts")
+    private LocalDateTime deletedTime;
 
     @Column(name="created_ts")
     private LocalDateTime createdTime;

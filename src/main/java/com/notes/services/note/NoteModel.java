@@ -1,10 +1,7 @@
 package com.notes.services.note;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import java.time.Instant;
-import lombok.Data;
-
 import java.time.LocalDateTime;
+import lombok.Data;
 
 @Data
 public class NoteModel {
@@ -18,6 +15,7 @@ public class NoteModel {
     private Long noteOrderIndex;
     private Boolean isPrivate;
     private LocalDateTime archivedTime;
+    private LocalDateTime deletedTime;
     private LocalDateTime createdTime;
     private Long clonedFromNoteId;
 }
