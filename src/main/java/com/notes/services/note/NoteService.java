@@ -1,20 +1,16 @@
 package com.notes.services.note;
 
-import static com.notes.services.note.NoteFilter.*;
-
 import com.notes.core.BaseCrudService;
 import com.notes.security.util.SecurityUtil;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.List;
-import java.util.TimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
 
 @Service
 public class NoteService extends BaseCrudService<NoteModel, NoteEntity, Long> {
@@ -52,12 +48,14 @@ public class NoteService extends BaseCrudService<NoteModel, NoteEntity, Long> {
                         new PageRequest(page, pageSize)));
             case FAVORITES:
                 Iterable<NoteEntity> entities = noteRepository
-                    .findAllByAccountIdAndArchivedTimeIsNullAndFavoriteIndexIsNotNullOrderByNoteOrderIndexDesc(accountId,
+                    .findAllByAccountIdAndArchivedTimeIsNullAndFavoriteIndexIsNotNullOrderByNoteOrderIndexDesc(
+                        accountId,
                         new PageRequest(page, pageSize));
                 return toModels(entities);
             case PINNED:
                 return toModels(noteRepository
-                    .findAllByAccountIdAndArchivedTimeIsNullAndPinIndexIsNotNullOrderByNoteOrderIndexDesc(accountId,
+                    .findAllByAccountIdAndArchivedTimeIsNullAndPinIndexIsNotNullOrderByNoteOrderIndexDesc(
+                        accountId,
                         new PageRequest(page, pageSize)));
             case TRASH:
                 return toModels(noteRepository
