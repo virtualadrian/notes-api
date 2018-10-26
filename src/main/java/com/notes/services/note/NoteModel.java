@@ -1,10 +1,13 @@
 package com.notes.services.note;
 
+import com.notes.core.BaseType;
+import com.notes.core.Mapping;
 import java.time.LocalDateTime;
 import lombok.Data;
 
 @Data
-public class NoteModel {
+@Mapping(type = NoteEntity.class)
+public class NoteModel extends BaseType {
     private Long id;
     private Long accountId;
     private String noteTitle;

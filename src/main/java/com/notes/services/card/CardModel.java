@@ -1,11 +1,14 @@
 package com.notes.services.card;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.notes.core.BaseType;
+import com.notes.core.Mapping;
 import java.time.LocalDateTime;
 import lombok.Data;
 
 @Data
-public class CardModel {
+@Mapping(type = CardEntity.class)
+public class CardModel extends BaseType {
     private Long id;
     private Long accountId;
     private Long deckId;

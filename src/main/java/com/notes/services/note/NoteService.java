@@ -5,7 +5,7 @@ import com.notes.security.util.SecurityUtil;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,15 +13,10 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class NoteService extends BaseCrudService<NoteModel, NoteEntity, Long> {
 
     private final NoteRepository noteRepository;
-
-    @Autowired
-    public NoteService(NoteRepository noteRepository) {
-        super(NoteModel.class, NoteEntity.class);
-        this.noteRepository = noteRepository;
-    }
 
     NoteModel createForCurrentUser(NoteModel newNote) {
         newNote.setAccountId(SecurityUtil.getCurrentUserAccountId());
@@ -45,7 +40,7 @@ public class NoteService extends BaseCrudService<NoteModel, NoteEntity, Long> {
             case ARCHIVED:
                 return toModels(noteRepository
                     .findAllByAccountIdAndArchivedTimeIsNotNullOrderByNoteOrderIndexDesc(accountId,
-                        new PageRequest(page, pageSize)));
+                        PageRequest.of(page, pageSize)));
             case FAVORITES:
                 Iterable<NoteEntity> entities = noteRepository
                     .findAllByAccountIdAndArchivedTimeIsNullAndFavoriteIndexIsNotNullOrderByNoteOrderIndexDesc(
@@ -56,15 +51,15 @@ public class NoteService extends BaseCrudService<NoteModel, NoteEntity, Long> {
                 return toModels(noteRepository
                     .findAllByAccountIdAndArchivedTimeIsNullAndPinIndexIsNotNullOrderByNoteOrderIndexDesc(
                         accountId,
-                        new PageRequest(page, pageSize)));
+                        PageRequest.of(page, pageSize)));
             case TRASH:
                 return toModels(noteRepository
                     .findAllByAccountIdDeleted(accountId,
-                        new PageRequest(page, pageSize)));
+                        PageRequest.of(page, pageSize)));
             default:
                 return toModels(noteRepository
                     .findAllByAccountIdAndArchivedTimeIsNullOrderByNoteOrderIndexDesc(accountId,
-                        new PageRequest(page, pageSize)));
+                        PageRequest.of(page, pageSize)));
         }
     }
 

@@ -4,19 +4,14 @@ import com.notes.core.BaseCrudService;
 import com.notes.security.util.SecurityUtil;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class CourseService extends BaseCrudService<CourseModel, CourseEntity, Long> {
 
     private final CourseRepository courseRepository;
-
-    @Autowired
-    public CourseService(CourseRepository courseRepository) {
-        super(CourseModel.class, CourseEntity.class);
-        this.courseRepository = courseRepository;
-    }
 
     public CourseModel createForCurrentUser(CourseModel creating) {
         creating.setAccountId(SecurityUtil.getCurrentUserAccountId());

@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,32 +26,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class AccountService extends BaseCrudService<AccountModel, AccountEntity, Long> {
 
     @Value("${spring.webapp.web-url}")
     private String webUrl;
 
-    @Autowired
-    private AccountRepository accountRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private VerificationService verificationService;
-
-    @Autowired
-    MailService mailService;
-
-    public AccountService() {
-        super(AccountModel.class, AccountEntity.class);
-    }
+    private final AccountRepository accountRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final VerificationService verificationService;
+    private final MailService mailService;
 
     public AccountModel loadByUsername(String userName) {
         return this.toModel(accountRepository.findByUsername(userName));

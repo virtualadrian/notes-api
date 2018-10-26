@@ -1,5 +1,7 @@
 package com.notes.services.carddeck;
 
+import com.notes.core.BaseType;
+import com.notes.core.Mapping;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,7 +14,8 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name="card_deck")
-public class CardDeckEntity {
+@Mapping(type = CardDeckModel.class)
+public class CardDeckEntity extends BaseType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

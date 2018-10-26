@@ -4,19 +4,14 @@ import com.notes.core.BaseCrudService;
 import com.notes.security.util.SecurityUtil;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class CardDeckService extends BaseCrudService<CardDeckModel, CardDeckEntity, Long> {
 
     private final CardDeckRepository cardDeckRepository;
-
-    @Autowired
-    public CardDeckService(CardDeckRepository cardDeckRepository) {
-        super(CardDeckModel.class, CardDeckEntity.class);
-        this.cardDeckRepository = cardDeckRepository;
-    }
 
     CardDeckModel createForCurrentUser(CardDeckModel creating) {
         creating.setAccountId(SecurityUtil.getCurrentUserAccountId());

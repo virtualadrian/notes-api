@@ -1,5 +1,6 @@
 package com.notes.core;
-
+import java.io.Serializable;
+import java.lang.reflect.Type;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,223 +11,93 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.io.Serializable;
-import java.lang.reflect.Type;
+public class BaseCrudService<M extends BaseType, E extends BaseType, ID extends Serializable> {
 
-/**
- * The type Base crud service.
- *
- * @param <M> the type parameter
- * @param <E> the type parameter
- * @param <ID> the type parameter
- */
-public class BaseCrudService<M, E, ID extends Serializable> implements IBaseCrudService<M, ID> {
-
-    // @formatter:off
-
-    /**
-     * The Type parameter class.
-     */
-    private final Class<M> modelClass;
-    private final Class<E> entityClass;
-    /**
-     * The Model collection type token.
-     */
-    protected final Type modelCollectionTypeToken = new TypeToken<Iterable<M>>() {}.getType();
-    /**
-     * The Entity collection type token.
-     */
-    protected final Type entityCollectionTypeToken = new TypeToken<Iterable<E>>() {}.getType();
-
-    /**
-     * The Repository.
-     */
     @Autowired
     private JpaRepository<E, ID> repository;
-
-    /**
-     * The Mapper.
-     */
     @Autowired
-    protected ModelMapper mapper;
+    private ModelMapper mapper;
 
-    /**
-     * Instantiates a new Base dao.
-     *
-     * @param modelClass the model class
-     * @param entityClass the repository class
-     */
-    public BaseCrudService(Class<M> modelClass, Class<E> entityClass) {
-        this.modelClass = modelClass;
-        this.entityClass = entityClass;
-    }
+    private final Type modelCollectionTypeToken = new TypeToken<Iterable<M>>() {}.getType()
+        .getClass();
+    private final Type entityCollectionTypeToken = new TypeToken<Iterable<E>>() {}.getType();
 
-    /**
-     * find one by the id
-     *
-     * @param id the id
-     * @return Model of M
-     */
-    @Override
     public M find(ID id) {
-        E entity = this.repository.findOne(id);
-        return toModel(entity);
+        return repository.findById(id).map(this::toModel).orElse(null);
     }
 
-    /**
-     * All iterable.
-     *
-     * @return the iterable
-     */
-    @Override
     public Iterable<M> findall() {
         Iterable<E> entities = this.repository.findAll();
         return this.mapper.map(entities, this.modelCollectionTypeToken);
     }
 
-    /**
-     * All iterable.
-     *
-     * @param page the page
-     * @param pageSize the page size
-     * @return the iterable
-     */
-    @Override
     public Page<M> findall(int page, int pageSize) {
-        Iterable<E> entities = this.repository.findAll(new PageRequest(page, pageSize));
+        Iterable<E> entities = this.repository.findAll(PageRequest.of(page, pageSize));
         return this.mapper.map(entities, this.modelCollectionTypeToken);
     }
 
-    /**
-     * All iterable.
-     *
-     * @param example the example
-     * @param page the page
-     * @param pageSize the page size
-     * @return the iterable
-     */
-    @Override
     public Page<M> findall(M example, int page, int pageSize) {
-        // create example repository, search and page
-        E sampleEntity = this.mapper.map(example, this.entityClass);
-
+        E sampleEntity = this.mapper.map(example, example.getMapping());
         Example<E> searchEntity = Example.of(sampleEntity);
-
         Iterable<E> entities = this.repository
-            .findAll(searchEntity, new PageRequest(page, pageSize));
-
+            .findAll(searchEntity, PageRequest.of(page, pageSize));
         return toPageModels(entities);
     }
 
-    /**
-     * All iterable.
-     *
-     * @param example the example
-     * @param page the page
-     * @param pageSize the page size
-     * @return the iterable
-     */
-    @Override
     public Page<M> findSortAll(M example, int page, int pageSize, Direction direction,
         String... properties) {
-        // create example repository, search and page
-        E sampleEntity = this.mapper.map(example, this.entityClass);
-
+        E sampleEntity = this.mapper.map(example, example.getMapping());
         Example<E> searchEntity = Example.of(sampleEntity);
-
         Iterable<E> entities = this.repository.findAll(searchEntity,
-            new PageRequest(page, pageSize, new Sort(direction, properties)));
-
+            PageRequest.of(page, pageSize, new Sort(direction, properties)));
         return toPageModels(entities);
     }
 
-    /**
-     * Find all not paged
-     *
-     * @param example the example
-     * @return the iterable
-     */
-    @Override
     public Iterable<M> findall(M example) {
-        E sampleEntity = this.mapper.map(example, this.entityClass);
+        E sampleEntity = this.mapper.map(example, example.getMapping());
         Example<E> searchEntity = Example.of(sampleEntity);
         Iterable<E> entities = this.repository.findAll(searchEntity);
         return toModels(entities);
     }
 
-    /**
-     * Model to instert
-     *
-     * @param creating the creating
-     * @return created Model of M
-     */
-    @Override
     public M create(M creating) {
-        E entity = this.mapper.map(creating, this.entityClass);
+        E entity = this.mapper.map(creating, creating.getMapping());
         E created = this.repository.save(entity);
-        return this.mapper.map(created, this.modelClass);
+        return this.mapper.map(created, creating.getMapping());
     }
 
-    /**
-     * Create a new collection
-     *
-     * @param creating the creating
-     * @return created Model Collection of M
-     */
-    @Override
     public Iterable<M> create(Iterable<M> creating) {
         Iterable<E> entities = this.mapper.map(creating, this.entityCollectionTypeToken);
-        Iterable<E> createdEntities = this.repository.save(entities);
+        Iterable<E> createdEntities = this.repository.saveAll(entities);
         return this.mapper.map(createdEntities, this.modelCollectionTypeToken);
     }
 
-    /**
-     * Update one
-     *
-     * @param updating the updating
-     * @return updated Model of M
-     */
-    @Override
     public M update(M updating) {
-        E entity = this.mapper.map(updating, this.entityClass);
+        E entity = this.mapper.map(updating, updating.getMapping());
         E created = this.repository.save(entity);
-        return this.mapper.map(created, this.modelClass);
+        return this.mapper.map(created, created.getMapping());
     }
 
-    /**
-     * Update the collection
-     *
-     * @param updating the updating
-     * @return updated Collection Model of M
-     */
-    @Override
     public Iterable<M> update(Iterable<M> updating) {
         Iterable<E> entitiesUpdating = this.mapper.map(updating, this.entityCollectionTypeToken);
         return this.mapper
-            .map(this.repository.save(entitiesUpdating), this.modelCollectionTypeToken);
+            .map(this.repository.saveAll(entitiesUpdating), this.modelCollectionTypeToken);
     }
 
-    /**
-     * Delete one
-     *
-     * @param id the id
-     */
-    @Override
     public void delete(ID id) {
         // delete by ID
-        this.repository.delete(id);
+        this.repository.deleteById(id);
     }
 
     protected M toModel(E entity) {
         if (entity == null) { return null; }
-        return this.mapper.map(entity, this.modelClass);
+        return this.mapper.map(entity, entity.getMapping());
     }
 
-    public E toEntity(M model) {
+    protected E toEntity(M model) {
         if (model == null) { return null; }
-        return this.mapper.map(model, this.entityClass);
+        return this.mapper.map(model, model.getMapping());
     }
-
 
     protected Page<M> toPageModels(Iterable<E> entities) {
         if (entities == null) { return null; }
@@ -242,5 +113,4 @@ public class BaseCrudService<M, E, ID extends Serializable> implements IBaseCrud
         if (models == null) { return null; }
         return this.mapper.map(models, this.entityCollectionTypeToken);
     }
-    // @formatter:on
 }

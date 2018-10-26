@@ -3,29 +3,19 @@ package com.notes.services.card;
 import com.notes.core.BaseCrudService;
 import com.notes.security.util.SecurityUtil;
 import com.notes.services.mail.MailService;
-import com.notes.services.note.NoteModel;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.HashMap;
-import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class CardService extends BaseCrudService<CardModel, CardEntity, Long> {
 
     private final CardRepository cardRepository;
+    private final MailService mailService;
 
-    @Autowired
-    MailService mailService;
-
-    @Autowired
-    public CardService(CardRepository cardRepository) {
-        super(CardModel.class, CardEntity.class);
-        this.cardRepository = cardRepository;
-    }
-
-    public CardModel createForCurrentUser(CardModel creating) {
+    CardModel createForCurrentUser(CardModel creating) {
         creating.setAccountId(SecurityUtil.getCurrentUserAccountId());
         creating.setCreatedTime(LocalDateTime.now(ZoneOffset.UTC));
         return create(creating);

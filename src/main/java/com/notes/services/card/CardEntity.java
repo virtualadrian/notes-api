@@ -1,5 +1,7 @@
 package com.notes.services.card;
 
+import com.notes.core.BaseType;
+import com.notes.core.Mapping;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,36 +14,37 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name="card")
-public class CardEntity {
+@Table(name = "card")
+@Mapping(type = CardModel.class)
+public class CardEntity extends BaseType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @Column(name="account_id")
+    @Column(name = "account_id")
     private Long accountId;
 
-    @Column(name="deck_id")
+    @Column(name = "deck_id")
     private Long deckId;
 
-    @Column(name="card_question")
+    @Column(name = "card_question")
     private String cardQuestion;
 
     @Lob
-    @Column(name="card_answer")
+    @Column(name = "card_answer")
     private String cardAnswer;
 
-    @Column(name="card_difficulty_id")
+    @Column(name = "card_difficulty_id")
     private String cardDifficultyId;
 
-    @Column(name="card_rating_id")
+    @Column(name = "card_rating_id")
     private String cardRatingId;
 
-    @Column(name="original_note_id")
+    @Column(name = "original_note_id")
     private Long originNoteId;
 
-    @Column(name="created_ts")
+    @Column(name = "created_ts")
     private LocalDateTime createdTime;
 }

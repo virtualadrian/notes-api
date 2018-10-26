@@ -1,5 +1,7 @@
 package com.notes.services.course;
 
+import com.notes.core.BaseType;
+import com.notes.core.Mapping;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,7 +14,8 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name="card_deck")
-public class CourseEntity {
+@Mapping(type = CourseModel.class)
+public class CourseEntity extends BaseType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

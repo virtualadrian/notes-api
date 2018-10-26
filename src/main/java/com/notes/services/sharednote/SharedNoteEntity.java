@@ -1,5 +1,7 @@
 package com.notes.services.sharednote;
 
+import com.notes.core.BaseType;
+import com.notes.core.Mapping;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,7 +15,8 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name="shared_note")
-public class SharedNoteEntity {
+@Mapping(type = SharedNoteModel.class)
+public class SharedNoteEntity extends BaseType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

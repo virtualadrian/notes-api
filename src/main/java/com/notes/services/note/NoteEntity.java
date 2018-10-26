@@ -1,5 +1,7 @@
 package com.notes.services.note;
 
+import com.notes.core.BaseType;
+import com.notes.core.Mapping;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,7 +17,8 @@ import org.hibernate.annotations.Where;
 @Entity
 @Table(name="note")
 @Where(clause="deleted_ts IS NULL")
-public class NoteEntity {
+@Mapping(type = NoteModel.class)
+public class NoteEntity extends BaseType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

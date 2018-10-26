@@ -3,8 +3,6 @@ package com.notes.services.verification;
 import com.notes.core.BaseCrudService;
 import com.notes.security.entity.User;
 import com.notes.security.repository.UserRepository;
-import com.notes.services.account.AccountModel;
-import com.notes.services.account.AccountService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwsHeader;
 import io.jsonwebtoken.Jwts;
@@ -12,35 +10,30 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SigningKeyResolver;
 import io.jsonwebtoken.SigningKeyResolverAdapter;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
-
 @Service
-public class VerificationService extends BaseCrudService<VerificationModel, VerificationEntity, Long>  {
+@RequiredArgsConstructor
+public class VerificationService extends
+    BaseCrudService<VerificationModel, VerificationEntity, Long> {
 
     private static final Integer AUTH_TOKEN_DURATION = 43200;
 
-    @Autowired
-    private VerificationRepository verificationRepository;
+    private final VerificationRepository verificationRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    public VerificationService() {
-        super(VerificationModel.class, VerificationEntity.class);
-    }
-
-    private VerificationModel getByTokenAndExpirationDateAfter(String token, LocalDateTime expiration) {
+    private VerificationModel getByTokenAndExpirationDateAfter(String token,
+        LocalDateTime expiration) {
         VerificationModel tokenModel = new VerificationModel();
 
-        Optional.ofNullable(verificationRepository.findByTokenAndTokenExpirationDateIsAfter(token, expiration))
+        Optional.ofNullable(
+            verificationRepository.findByTokenAndTokenExpirationDateIsAfter(token, expiration))
             .ifPresent(tokenEntity -> {
                 tokenModel.setId(tokenEntity.getId());
                 tokenModel.setToken(tokenEntity.getToken());

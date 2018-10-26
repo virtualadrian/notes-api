@@ -1,9 +1,12 @@
 package com.notes.services.account;
 
+import com.notes.core.BaseType;
+import com.notes.core.Mapping;
 import lombok.Data;
 
 @Data
-public class AccountModel {
+@Mapping(type = AccountEntity.class)
+public class AccountModel extends BaseType {
     private long id;
     private String username;
     private String email;

@@ -1,5 +1,7 @@
 package com.notes.services.account;
 
+import com.notes.core.BaseType;
+import com.notes.core.Mapping;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,7 +13,8 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name="account")
-public class AccountEntity {
+@Mapping(type = AccountModel.class)
+public class AccountEntity extends BaseType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
