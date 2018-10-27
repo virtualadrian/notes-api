@@ -4,8 +4,10 @@ import com.notes.core.BaseType;
 import com.notes.core.Mapping;
 import java.time.LocalDateTime;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Mapping(type = NoteEntity.class)
 public class NoteModel extends BaseType {
     private Long id;

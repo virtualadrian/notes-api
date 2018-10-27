@@ -11,11 +11,13 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Where;
 
 @Data
 @Entity
 @Table(name="note")
+@EqualsAndHashCode(callSuper = true)
 @Where(clause="deleted_ts IS NULL")
 @Mapping(type = NoteModel.class)
 public class NoteEntity extends BaseType {

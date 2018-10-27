@@ -18,8 +18,7 @@ public class BaseCrudService<M extends BaseType, E extends BaseType, ID extends 
     @Autowired
     private ModelMapper mapper;
 
-    private final Type modelCollectionTypeToken = new TypeToken<Iterable<M>>() {}.getType()
-        .getClass();
+    private final Type modelCollectionTypeToken = new TypeToken<Iterable<M>>() {}.getType();
     private final Type entityCollectionTypeToken = new TypeToken<Iterable<E>>() {}.getType();
 
     public M find(ID id) {

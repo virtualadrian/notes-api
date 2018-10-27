@@ -2,7 +2,7 @@ package com.notes.services.note;
 
 import com.notes.core.ApplicationMessage;
 import com.notes.core.BaseController;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,22 +12,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/note")
+@RequiredArgsConstructor
 public class NoteController extends BaseController {
 
     private final NoteService noteService;
-
-    @Autowired
-    public NoteController(NoteService noteService) {this.noteService = noteService;}
 
     @RequestMapping(value = "/public/{noteId}", method = RequestMethod.GET)
     public ResponseEntity<NoteModel> getPublicNote(@PathVariable("noteId") Long noteId) {
         return Ok(noteService.findSharedNote(noteId));
     }
 
-    @RequestMapping(value="/filter/{term}", method = RequestMethod.GET)
+    @RequestMapping(value = "/filter/{term}", method = RequestMethod.GET)
     public ResponseEntity<Iterable<NoteModel>> getAll(@PathVariable final String term) {
         Iterable<NoteModel> userNotes =
-            noteService.filterForCurrentUser(term,0, 100);
+            noteService.filterForCurrentUser(term, 0, 100);
         return Ok(userNotes);
     }
 
