@@ -82,17 +82,15 @@ create table card
   engine=InnoDB
 ;
 
-create table card_deck
-(
-  id bigint auto_increment
-    primary key,
-  account_id bigint null,
-  deck_name varchar(255) null,
-  course_id varchar(255) null,
-  created_ts datetime null,
-  deck_description varchar(255) null
-)
-  engine=InnoDB
+create table card_deck (
+  id bigint not null auto_increment,
+  account_id bigint,
+  course_id varchar(255),
+  created_ts datetime,
+  deck_description varchar(255),
+  deck_name varchar(255),
+  primary key (id)
+) engine=InnoDB
 ;
 
 create table hibernate_sequence
@@ -102,25 +100,27 @@ create table hibernate_sequence
   engine=InnoDB
 ;
 
-create table note
-(
-  id bigint auto_increment
-    primary key,
-  account_id bigint null,
-  cloned_from_note_id bigint null,
-  created_ts datetime null,
-  is_private bit null,
-  note_body longtext null,
-  note_tags longtext null,
-  note_title longtext null
-)
-  engine=InnoDB
+create table note (
+  id bigint not null auto_increment,
+  account_id bigint,
+  archived_ts datetime,
+  cloned_from_note_id bigint,
+  created_ts datetime,
+  deleted_ts datetime,
+  favorite_index bigint,
+  is_private bit,
+  note_body longtext,
+  note_order_index bigint,
+  note_tags longtext,
+  note_title varchar(512),
+  pin_index bigint,
+  primary key (id)
+) engine=InnoDB
 ;
 
 create table oauth_client_details
 (
-  client_id varchar(256) not null
-    primary key,
+  client_id varchar(256) not null primary key,
   resource_ids varchar(256) null,
   client_secret varchar(256) null,
   scope varchar(256) null,
@@ -135,34 +135,30 @@ create table oauth_client_details
   engine=InnoDB
 ;
 
-create table profile
-(
-  id bigint auto_increment
-    primary key,
-  account_id bigint null,
-  created_ts datetime null,
-  profile_avatar varchar(255) null,
-  profile_biography varchar(255) null,
-  profile_company varchar(255) null,
-  profile_facebook varchar(255) null,
-  profile_google_plus varchar(255) null,
-  profile_linked_in varchar(255) null,
-  profile_location varchar(255) null,
-  profile_twitter varchar(255) null,
-  profile_url varchar(255) null
-)
-  engine=InnoDB
-;
+create table profile (
+  id bigint not null auto_increment,
+  account_id bigint,
+  created_ts datetime,
+  profile_avatar varchar(255),
+  profile_biography varchar(255),
+  profile_company varchar(255),
+  profile_facebook varchar(255),
+  profile_google_plus varchar(255),
+  profile_linked_in varchar(255),
+  profile_location varchar(255),
+  profile_twitter varchar(255),
+  profile_url varchar(255),
+  primary key (id)
+) engine=InnoDB;
 
-create table shared_note
-(
-  id bigint auto_increment
-    primary key,
-  note_created_ts datetime null,
-  note_id bigint null,
-  share_expires datetime null
-)
-  engine=InnoDB
+
+create table shared_note (
+  id bigint not null auto_increment,
+  note_created_ts datetime,
+  note_id bigint,
+  share_expires datetime,
+  primary key (id)
+) engine=InnoDB
 ;
 
 create table verification
@@ -174,5 +170,15 @@ create table verification
   user_id bigint null
 )
   engine=InnoDB
+;
+
+create table course (
+  id bigint not null auto_increment,
+  account_id bigint,
+  course_code varchar(255),
+  course_name varchar(255),
+  created_ts datetime,
+  primary key (id)
+) engine=InnoDB
 ;
 

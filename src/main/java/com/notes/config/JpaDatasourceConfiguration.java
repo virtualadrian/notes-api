@@ -1,12 +1,5 @@
 package com.notes.config;
 
-import java.util.Optional;
-import java.util.Properties;
-
-import javax.naming.NamingException;
-import javax.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
-
 import com.zaxxer.hikari.HikariDataSource;
 import java.util.Optional;
 import java.util.Properties;
@@ -125,12 +118,14 @@ public class JpaDatasourceConfiguration {
         properties.put("hibernate.format_sql",
             environment.getRequiredProperty("spring.jpa.properties.hibernate.format_sql"));
 
-        Optional.ofNullable(environment.getProperty("spring.jpa.properties.hibernate.hbm2ddl.import_files"))
+        Optional.ofNullable(
+            environment.getProperty("spring.jpa.properties.hibernate.hbm2ddl.import_files"))
             .ifPresent(files -> {
                 properties.put("hibernate.hbm2ddl.import_files", files);
             });
 
-        Optional.ofNullable(environment.getProperty("spring.jpa.properties.hibernate.default_schema"))
+        Optional
+            .ofNullable(environment.getProperty("spring.jpa.properties.hibernate.default_schema"))
             .ifPresent(defaultSchema -> {
                 properties.put("hibernate.default_schema", defaultSchema);
             });

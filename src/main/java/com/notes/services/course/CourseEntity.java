@@ -13,7 +13,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name="card_deck")
+@Table(name="course")
 @Mapping(type = CourseModel.class)
 public class CourseEntity extends BaseType {
 
