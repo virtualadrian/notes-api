@@ -1,5 +1,6 @@
 package com.notes.services.note;
 
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -34,4 +35,17 @@ public interface NoteRepository extends JpaRepository<NoteEntity, Long> {
         final Long accountId, Pageable pageable);
 
     NoteEntity findByIdAndIsPrivateIsTrueOrderByNoteOrderIndexDescPinIndexAscIdDesc(final Long Id);
+
+    List<NoteEntity> findAllByAccountIdAndArchivedTimeIsNull(final Long accountId);
+
+    List<NoteEntity> findAllByAccountIdAndNoteTagsContains(final Long accountId, final String tag);
+
+    @Query(nativeQuery = true, value = "" +
+        "SELECT N.* " +
+        "FROM note N " +
+        "WHERE account_id = :accountId " +
+        "AND archived_ts IS NULL " +
+        "AND MATCH(note_tags) AGAINST(:tagList IN BOOLEAN MODE);")
+    List<NoteEntity> findAllForAccountWithTags(@Param("accountId") final Long accountId,
+        @Param("tagList") final String tagList);
 }

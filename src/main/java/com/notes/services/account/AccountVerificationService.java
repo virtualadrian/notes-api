@@ -1,4 +1,4 @@
-package com.notes.services.verification;
+package com.notes.services.account;
 
 import com.notes.core.BaseCrudService;
 import com.notes.security.entity.User;
@@ -10,39 +10,18 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SigningKeyResolver;
 import io.jsonwebtoken.SigningKeyResolverAdapter;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Date;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class VerificationService extends
-    BaseCrudService<VerificationModel, VerificationEntity, Long> {
+public class AccountVerificationService {
 
     private static final Integer AUTH_TOKEN_DURATION = 43200;
 
-    private final VerificationRepository verificationRepository;
     private final UserRepository userRepository;
-
-    private VerificationModel getByTokenAndExpirationDateAfter(String token,
-        LocalDateTime expiration) {
-        VerificationModel tokenModel = new VerificationModel();
-
-        Optional.ofNullable(
-            verificationRepository.findByTokenAndTokenExpirationDateIsAfter(token, expiration))
-            .ifPresent(tokenEntity -> {
-                tokenModel.setId(tokenEntity.getId());
-                tokenModel.setToken(tokenEntity.getToken());
-                tokenModel.setUserId(tokenEntity.getUserId());
-                tokenModel.setTokenExpirationDate(tokenEntity.getTokenExpirationDate());
-            });
-
-        return StringUtils.isNotBlank(tokenModel.getToken()) ? tokenModel : null;
-    }
 
     private SigningKeyResolver resetTokenKeyResolver = new SigningKeyResolverAdapter() {
         @Override

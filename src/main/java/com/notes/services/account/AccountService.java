@@ -1,17 +1,12 @@
 package com.notes.services.account;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.hash.Hashing;
 import com.notes.core.BaseCrudService;
 import com.notes.security.entity.User;
 import com.notes.security.repository.RoleRepository;
 import com.notes.security.repository.UserRepository;
 import com.notes.security.util.SecurityUtil;
 import com.notes.services.mail.MailService;
-import com.notes.services.verification.VerificationModel;
-import com.notes.services.verification.VerificationService;
 import io.jsonwebtoken.Claims;
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -20,7 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,7 +30,7 @@ public class AccountService extends BaseCrudService<AccountModel, AccountEntity,
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private final VerificationService verificationService;
+    private final AccountVerificationService accountVerificationService;
     private final MailService mailService;
 
     public AccountModel loadByUsername(String userName) {
@@ -68,7 +62,7 @@ public class AccountService extends BaseCrudService<AccountModel, AccountEntity,
             .validatePassword(confirmation.getPassword(), confirmation.getConfirmPassword())) {
             return null;
         }
-        return verificationService.getResetTokenClaims(confirmation.getToken());
+        return accountVerificationService.getResetTokenClaims(confirmation.getToken());
     }
 
     private User updateTokenUserPassword(Claims claims, AccountConfirmationModel confirmation) {
@@ -109,7 +103,7 @@ public class AccountService extends BaseCrudService<AccountModel, AccountEntity,
         mailbag.put("webUrl", webUrl);
         mailbag.put("applicationName", "Noteler");
         mailbag.put("supportEmail", "info@noteler.com");
-        mailbag.put("token", verificationService.getResetJwt(user));
+        mailbag.put("token", accountVerificationService.getResetJwt(user));
 
         String template = isRegistering ? "newAccountEmail.html" : "passwordResetEmail.html";
         String subject = isRegistering ? String.format("Welcome! %s!", user.getFirstName())

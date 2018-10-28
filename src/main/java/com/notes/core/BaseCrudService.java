@@ -1,6 +1,8 @@
 package com.notes.core;
 import java.io.Serializable;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,20 +27,20 @@ public class BaseCrudService<M extends BaseType, E extends BaseType, ID extends 
         return repository.findById(id).map(this::toModel).orElse(null);
     }
 
-    public Iterable<M> findall() {
-        Iterable<E> entities = this.repository.findAll();
+    public List<M> findall() {
+        List<E> entities = this.repository.findAll();
         return this.mapper.map(entities, this.modelCollectionTypeToken);
     }
 
     public Page<M> findall(int page, int pageSize) {
-        Iterable<E> entities = this.repository.findAll(PageRequest.of(page, pageSize));
+        Page<E> entities = this.repository.findAll(PageRequest.of(page, pageSize));
         return this.mapper.map(entities, this.modelCollectionTypeToken);
     }
 
     public Page<M> findall(M example, int page, int pageSize) {
         E sampleEntity = this.mapper.map(example, example.getMapping());
         Example<E> searchEntity = Example.of(sampleEntity);
-        Iterable<E> entities = this.repository
+        Page<E> entities = this.repository
             .findAll(searchEntity, PageRequest.of(page, pageSize));
         return toPageModels(entities);
     }
@@ -47,38 +49,38 @@ public class BaseCrudService<M extends BaseType, E extends BaseType, ID extends 
         String... properties) {
         E sampleEntity = this.mapper.map(example, example.getMapping());
         Example<E> searchEntity = Example.of(sampleEntity);
-        Iterable<E> entities = this.repository.findAll(searchEntity,
+        Page<E> entities = this.repository.findAll(searchEntity,
             PageRequest.of(page, pageSize, new Sort(direction, properties)));
         return toPageModels(entities);
     }
 
-    public Iterable<M> findall(M example) {
+    public List<M> findall(M example) {
         E sampleEntity = this.mapper.map(example, example.getMapping());
         Example<E> searchEntity = Example.of(sampleEntity);
-        Iterable<E> entities = this.repository.findAll(searchEntity);
+        List<E> entities = this.repository.findAll(searchEntity);
         return toModels(entities);
     }
 
     public M create(M creating) {
         E entity = this.mapper.map(creating, creating.getMapping());
         E created = this.repository.save(entity);
-        return this.mapper.map(created, creating.getMapping());
+        return this.mapper.map(created, created.getMapping());
     }
 
-    public Iterable<M> create(Iterable<M> creating) {
-        Iterable<E> entities = this.mapper.map(creating, this.entityCollectionTypeToken);
-        Iterable<E> createdEntities = this.repository.saveAll(entities);
+    public List<M> create(List<M> creating) {
+        List<E> entities = this.mapper.map(creating, this.entityCollectionTypeToken);
+        List<E> createdEntities = this.repository.saveAll(entities);
         return this.mapper.map(createdEntities, this.modelCollectionTypeToken);
     }
 
     public M update(M updating) {
         E entity = this.mapper.map(updating, updating.getMapping());
-        E created = this.repository.save(entity);
-        return this.mapper.map(created, created.getMapping());
+        E updated = this.repository.save(entity);
+        return this.mapper.map(updated, updated.getMapping());
     }
 
-    public Iterable<M> update(Iterable<M> updating) {
-        Iterable<E> entitiesUpdating = this.mapper.map(updating, this.entityCollectionTypeToken);
+    public List<M> update(List<M> updating) {
+        List<E> entitiesUpdating = this.mapper.map(updating, this.entityCollectionTypeToken);
         return this.mapper
             .map(this.repository.saveAll(entitiesUpdating), this.modelCollectionTypeToken);
     }
@@ -98,17 +100,17 @@ public class BaseCrudService<M extends BaseType, E extends BaseType, ID extends 
         return this.mapper.map(model, model.getMapping());
     }
 
-    protected Page<M> toPageModels(Iterable<E> entities) {
+    protected Page<M> toPageModels(Page<E> entities) {
         if (entities == null) { return null; }
         return this.mapper.map(entities, this.modelCollectionTypeToken);
     }
 
-    protected Iterable<M> toModels(Iterable<E> entities) {
+    protected List<M> toModels(List<E> entities) {
         if (entities == null) { return null; }
         return this.mapper.map(entities, this.modelCollectionTypeToken);
     }
 
-    protected Iterable<E> toEntities(Iterable<M> models) {
+    protected List<E> toEntities(List<M> models) {
         if (models == null) { return null; }
         return this.mapper.map(models, this.entityCollectionTypeToken);
     }

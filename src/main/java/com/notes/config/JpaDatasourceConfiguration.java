@@ -109,9 +109,6 @@ public class JpaDatasourceConfiguration {
         properties.put("hibernate.dialect",
             environment.getRequiredProperty("spring.jpa.properties.hibernate.dialect"));
 
-//        properties.put("hibernate.hbm2ddl.auto",
-//            environment.getRequiredProperty("spring.jpa.properties.hibernate.hbm2ddl.method"));
-
         properties.put("hibernate.show_sql",
             environment.getRequiredProperty("spring.jpa.properties.hibernate.show_sql"));
 

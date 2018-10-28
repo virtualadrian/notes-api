@@ -2,12 +2,14 @@ package com.notes.services.note;
 
 import com.notes.core.ApplicationMessage;
 import com.notes.core.BaseController;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -89,5 +91,17 @@ public class NoteController extends BaseController {
     public ResponseEntity delete(@PathVariable("id") long id) {
         noteService.delete(id);
         return Ok();
+    }
+
+    @RequestMapping(value = "/tags", method = RequestMethod.GET)
+    public ResponseEntity findTagsForCurrentUser() {
+        return Ok(noteService.findTagsForCurrentUser());
+    }
+
+    @RequestMapping(value = "/tags/filter", method = RequestMethod.GET)
+    public ResponseEntity findTagsForCurrentUser(
+        @RequestParam(value = "tag") final List<String> tags) {
+        List<NoteModel> notes = noteService.findAllForAccountWithTags(tags);
+        return Ok(notes);
     }
 }

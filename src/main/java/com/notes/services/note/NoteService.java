@@ -5,6 +5,10 @@ import com.notes.security.util.SecurityUtil;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Arrays;
+import java.util.List;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,40 +38,40 @@ public class NoteService extends BaseCrudService<NoteModel, NoteEntity, Long> {
             Direction.DESC, "noteOrderIndex", "id");
     }
 
-    Iterable<NoteModel> filterForCurrentUser(String term, int page, int pageSize) {
+    Page<NoteModel> filterForCurrentUser(String term, int page, int pageSize) {
         Long accountId = SecurityUtil.getCurrentUserAccountId();
         switch (NoteFilter.valueOf(term)) {
             case ARCHIVED:
-                return toModels(noteRepository
+                return toPageModels(noteRepository
                     .findAllByAccountIdAndArchivedTimeIsNotNullOrderByNoteOrderIndexDesc(accountId,
                         PageRequest.of(page, pageSize)));
             case FAVORITES:
-                Iterable<NoteEntity> entities = noteRepository
+                Page<NoteEntity> entities = noteRepository
                     .findAllByAccountIdAndArchivedTimeIsNullAndFavoriteIndexIsNotNullOrderByNoteOrderIndexDesc(
                         accountId,
-                        new PageRequest(page, pageSize));
-                return toModels(entities);
+                        PageRequest.of(page, pageSize));
+                return toPageModels(entities);
             case PINNED:
-                return toModels(noteRepository
+                return toPageModels(noteRepository
                     .findAllByAccountIdAndArchivedTimeIsNullAndPinIndexIsNotNullOrderByNoteOrderIndexDesc(
                         accountId,
                         PageRequest.of(page, pageSize)));
             case TRASH:
-                return toModels(noteRepository
+                return toPageModels(noteRepository
                     .findAllByAccountIdDeleted(accountId,
                         PageRequest.of(page, pageSize)));
             default:
-                return toModels(noteRepository
+                return toPageModels(noteRepository
                     .findAllByAccountIdAndArchivedTimeIsNullOrderByNoteOrderIndexDesc(accountId,
                         PageRequest.of(page, pageSize)));
         }
     }
 
-    Iterable<NoteModel> findNonArchivedForCurrentUser(int page, int pageSize) {
+    Page<NoteModel> findNonArchivedForCurrentUser(int page, int pageSize) {
         Long accountId = SecurityUtil.getCurrentUserAccountId();
-        return toModels(noteRepository
+        return toPageModels(noteRepository
             .findAllByAccountIdAndArchivedTimeIsNullOrderByNoteOrderIndexDesc(accountId,
-                new PageRequest(page, pageSize)));
+                PageRequest.of(page, pageSize)));
     }
 
     NoteModel findSharedNote(final Long noteId) {
@@ -76,8 +80,8 @@ public class NoteService extends BaseCrudService<NoteModel, NoteEntity, Long> {
     }
 
     Page<NoteModel> findAllForCurrentUserByTerm(String term, int page, int pageSize) {
-        Pageable pageRequest = new PageRequest(page, pageSize);
-        Iterable<NoteEntity> noteEntityList = this.noteRepository
+        Pageable pageRequest = PageRequest.of(page, pageSize);
+        Page<NoteEntity> noteEntityList = this.noteRepository
             .findAllByAccountIdAndNoteBodyContainsOrNoteTitleContains(
                 SecurityUtil.getCurrentUserAccountId(), term, term,
                 pageRequest);
@@ -112,5 +116,23 @@ public class NoteService extends BaseCrudService<NoteModel, NoteEntity, Long> {
         from.setAccountId(SecurityUtil.getCurrentUserAccountId());
         from.setNoteOrderIndex(from.getNoteOrderIndex() - 1);
         return create(from);
+    }
+
+    List<String> findTagsForCurrentUser() {
+        Long accountId = SecurityUtil.getCurrentUserAccountId();
+        return noteRepository.findAllByAccountIdAndArchivedTimeIsNull(accountId).stream()
+            .map(NoteEntity::getNoteTags)
+            .map(tags -> tags.split(","))
+            .flatMap(Arrays::stream)
+            .sorted()
+            .distinct()
+            .collect(Collectors.toList());
+    }
+
+    List<NoteModel> findAllForAccountWithTags(List<String> tags) {
+        Long accountId = SecurityUtil.getCurrentUserAccountId();
+        StringJoiner tagJoiner = new StringJoiner(" +", "+", "");
+        tags.forEach(tagJoiner::add);
+        return toModels(noteRepository.findAllForAccountWithTags(accountId, tagJoiner.toString()));
     }
 }
